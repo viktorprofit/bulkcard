@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
+const { useRef, useState } = React
 
-export default function RealBulkoorCardGenerator() {
+function RealBulkoorCardGenerator() {
   const [name, setName] = useState('Real Bulkoor')
   const [level, setLevel] = useState('Bullish')
   const [imgData, setImgData] = useState(DEFAULT_IMG)
@@ -43,12 +43,12 @@ export default function RealBulkoorCardGenerator() {
       ctx.restore()
 
       ctx.fillStyle = '#fff'
-      ctx.font = 'bold 48px Inter, system-ui'
+      ctx.font = 'bold 48px Inter, system-ui, Arial'
       ctx.textBaseline = 'top'
       ctx.fillText(name || 'Real Bulkoor', imgX + imgSize + 40, imgY + 20)
 
       ctx.fillStyle = '#94a3b8'
-      ctx.font = '400 26px Inter, system-ui'
+      ctx.font = '400 26px Inter, system-ui, Arial'
       ctx.fillText('Real community participant', imgX + imgSize + 40, imgY + 84)
 
       const badgeX = imgX + imgSize + 40
@@ -56,35 +56,35 @@ export default function RealBulkoorCardGenerator() {
       drawBadge(ctx, badgeX, badgeY, level)
 
       ctx.fillStyle = '#9ca3af'
-      ctx.font = '400 20px Inter, system-ui'
+      ctx.font = '400 20px Inter, system-ui, Arial'
       ctx.fillText('Real Bulkoor — generated card', 60, height - 120)
 
       const link = document.createElement('a')
-      link.download = `${(name || 'real-bulkoor').replace(/\\s+/g, '_').toLowerCase()}.png`
+      link.download = `${(name || 'real-bulkoor').replace(/\s+/g, '_').toLowerCase()}.png`
       link.href = canvas.toDataURL('image/png')
       link.click()
     }
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-4">Real Bulkoor — Card Generator</h1>
+    <div style={{maxWidth:'900px', margin:'0 auto', padding:'24px'}}>
+      <h1 style={{fontSize:'22px', fontWeight:600, marginBottom:'16px'}}>Real Bulkoor — Card Generator</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-4">
-          <label className="block">
-            <div className="text-sm text-slate-500 mb-2">Name</div>
+      <div style={{display:'grid', gridTemplateColumns:'1fr 320px', gap:'24px'}}>
+        <div>
+          <label style={{display:'block', marginBottom:'16px'}}>
+            <div style={{fontSize:'12px', color:'#64748b', marginBottom:'8px'}}>Name</div>
             <input
-              className="w-full px-3 py-2 rounded border bg-slate-50"
+              style={{width:'100%', padding:'10px 12px', borderRadius:8, border:'1px solid #e2e8f0', background:'#f8fafc'}}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </label>
 
-          <label className="block">
-            <div className="text-sm text-slate-500 mb-2">Bullish level</div>
+          <label style={{display:'block', marginBottom:'16px'}}>
+            <div style={{fontSize:'12px', color:'#64748b', marginBottom:'8px'}}>Bullish level</div>
             <select
-              className="w-full px-3 py-2 rounded border bg-white"
+              style={{width:'100%', padding:'10px 12px', borderRadius:8, border:'1px solid #e2e8f0', background:'#fff'}}
               value={level}
               onChange={(e) => setLevel(e.target.value)}
             >
@@ -96,40 +96,36 @@ export default function RealBulkoorCardGenerator() {
             </select>
           </label>
 
-          <label className="block">
-            <div className="text-sm text-slate-500 mb-2">Photo (optional)</div>
+          <label style={{display:'block', marginBottom:'16px'}}>
+            <div style={{fontSize:'12px', color:'#64748b', marginBottom:'8px'}}>Photo (optional)</div>
             <input type="file" accept="image/*" onChange={onFileChange} />
           </label>
 
-          <div className="flex gap-3 mt-4">
+          <div style={{display:'flex', gap:'12px', marginTop:'12px'}}>
             <button
-              onClick={() => downloadCard()}
-              className="px-4 py-2 bg-slate-900 text-white rounded hover:opacity-95"
+              onClick={downloadCard}
+              style={{padding:'10px 16px', background:'#0f172a', color:'#fff', borderRadius:8, border:'none', cursor:'pointer'}}
             >
               Download card
             </button>
 
             <button
-              onClick={() => {
-                setImgData(DEFAULT_IMG)
-                setName('Real Bulkoor')
-                setLevel('Bullish')
-              }}
-              className="px-4 py-2 border rounded"
+              onClick={() => { setImgData(DEFAULT_IMG); setName('Real Bulkoor'); setLevel('Bullish') }}
+              style={{padding:'10px 16px', background:'#fff', color:'#0f172a', borderRadius:8, border:'1px solid #cbd5e1', cursor:'pointer'}}
             >
               Reset
             </button>
           </div>
         </div>
 
-        <div className="md:col-span-1">
-          <div className="p-4 bg-white rounded shadow" ref={previewRef}>
+        <div>
+          <div ref={previewRef} style={{padding:'16px', background:'#fff', borderRadius:12, boxShadow:'0 1px 3px rgba(0,0,0,.08)'}}>
             <CardPreview name={name} level={level} imgData={imgData} />
           </div>
         </div>
       </div>
 
-      <p className="mt-6 text-sm text-slate-500">
+      <p style={{marginTop:'16px', fontSize:'12px', color:'#64748b'}}>
         Tip: choose a clear face photo for best result. The card export is a high-resolution PNG.
       </p>
     </div>
@@ -138,14 +134,14 @@ export default function RealBulkoorCardGenerator() {
 
 function CardPreview({ name, level, imgData }) {
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="rounded-2xl bg-slate-900 text-white p-6">
-        <div className="flex items-center gap-4">
-          <img src={imgData} alt="avatar" className="w-24 h-24 rounded-full object-cover" />
+    <div style={{width:'100%', maxWidth:'360px', margin:'0 auto'}}>
+      <div style={{borderRadius:16, background:'#0f172a', color:'#fff', padding:'24px'}}>
+        <div style={{display:'flex', alignItems:'center', gap:'16px'}}>
+          <img src={imgData} alt="avatar" style={{width:96, height:96, borderRadius:'9999px', objectFit:'cover'}} />
           <div>
-            <div className="text-lg font-semibold">{name || 'Real Bulkoor'}</div>
-            <div className="text-sm text-slate-300">Real Bulkoor card</div>
-            <div className="mt-3 inline-block px-3 py-1 bg-slate-700 rounded text-sm">{level}</div>
+            <div style={{fontSize:'18px', fontWeight:600}}>{name || 'Real Bulkoor'}</div>
+            <div style={{fontSize:'13px', color:'#cbd5e1'}}>Real Bulkoor card</div>
+            <div style={{marginTop:'12px', display:'inline-block', padding:'6px 10px', background:'#334155', borderRadius:8, fontSize:'13px'}}>{level}</div>
           </div>
         </div>
       </div>
@@ -153,6 +149,7 @@ function CardPreview({ name, level, imgData }) {
   )
 }
 
+// helpers
 function roundRect(ctx, x, y, w, h, r, fillStyle) {
   ctx.fillStyle = fillStyle || '#111827'
   ctx.beginPath()
@@ -167,15 +164,30 @@ function roundRect(ctx, x, y, w, h, r, fillStyle) {
 
 function drawBadge(ctx, x, y, text) {
   const padX = 18
-  const padY = 10
-  ctx.font = '600 28px Inter, system-ui'
-  const w = ctx.measureText(text).width + padX * 2
   const h = 44
+  const font = '600 28px Inter, system-ui, Arial'
+  const w = measureTextWidth(text, font) + padX * 2
   ctx.fillStyle = '#065f46'
   ctx.fillRect(x, y, w, h)
   ctx.fillStyle = '#fff'
+  ctx.font = font
   ctx.textBaseline = 'middle'
   ctx.fillText(text, x + padX, y + h / 2)
 }
 
-const DEFAULT_IMG = `data:image/svg+xml;utf8,${encodeURIComponent(\n  `<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 24 24' fill='none'>\n    <rect width='24' height='24' rx='4' fill='%232b2f3a'/>\n    <g transform='translate(4,4) scale(0.8)'>\n      <circle cx='8' cy='7' r='3' fill='%2399a3b2'/>\n      <rect x='2' y='13' width='12' height='5' rx='2' fill='%2399a3b2'/>\n    </g>\n  </svg>`)}`
+function measureTextWidth(text, font) {
+  const c = document.createElement('canvas')
+  const ctx = c.getContext('2d')
+  ctx.font = font
+  return ctx.measureText(text).width
+}
+
+const DEFAULT_IMG = `data:image/svg+xml;utf8,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 24 24' fill='none'>
+    <rect width='24' height='24' rx='4' fill='%232b2f3a'/>
+    <g transform='translate(4,4) scale(0.8)'>
+      <circle cx='8' cy='7' r='3' fill='%2399a3b2'/>
+      <rect x='2' y='13' width='12' height='5' rx='2' fill='%2399a3b2'/>
+    </g>
+  </svg>`
+)}`

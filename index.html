@@ -4,18 +4,191 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Real Bulkoor — Card Generator</title>
-    <link rel="icon" href="/favicon.ico" />
-    <!-- React + ReactDOM (CDN) -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <!-- Babel для JSX у браузері -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      body {
+        font-family: Inter, system-ui, sans-serif;
+        background: #f8fafc;
+        margin: 0;
+        padding: 40px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .card {
+        background: #0f172a;
+        color: #fff;
+        border-radius: 20px;
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      .card img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .badge {
+        background: #334155;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 10px;
+        display: inline-block;
+        margin-top: 10px;
+      }
+      .preview {
+        background: #fff;
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        margin-bottom: 16px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+      }
+      button {
+        background: #0f172a;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+      .reset {
+        background: white;
+        color: #0f172a;
+        border: 1px solid #cbd5e1;
+      }
+    </style>
   </head>
-  <body style="background:#f8fafc; margin:0;">
-    <div id="root"></div>
+  <body>
+    <div class="container">
+      <h1>Real Bulkoor — Card Generator</h1>
 
-    <!-- Наші JSX-файли (тип: text/babel) -->
-    <script type="text/babel" src="/App.jsx"></script>
-    <script type="text/babel" src="/main.jsx"></script>
+      <label>Name</label>
+      <input id="name" value="Real Bulkoor" />
+
+      <label>Bullish level</label>
+      <select id="level">
+        <option>Not bullish</option>
+        <option>Mild</option>
+        <option selected>Bullish</option>
+        <option>Very bullish</option>
+        <option>Max bullish</option>
+      </select>
+
+      <label>Photo (optional)</label>
+      <input id="photo" type="file" accept="image/*" />
+
+      <div style="margin-top:20px;">
+        <button onclick="downloadCard()">Download card</button>
+        <button class="reset" onclick="resetForm()">Reset</button>
+      </div>
+
+      <h3 style="margin-top:40px;">Preview</h3>
+      <div class="preview" id="preview"></div>
+    </div>
+
+    <script>
+      const preview = document.getElementById("preview");
+      const nameInput = document.getElementById("name");
+      const levelInput = document.getElementById("level");
+      const photoInput = document.getElementById("photo");
+
+      const defaultImg =
+        "data:image/svg+xml;utf8," +
+        encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 24 24' fill='none'>
+            <rect width='24' height='24' rx='4' fill='%232b2f3a'/>
+            <g transform='translate(4,4) scale(0.8)'>
+              <circle cx='8' cy='7' r='3' fill='%2399a3b2'/>
+              <rect x='2' y='13' width='12' height='5' rx='2' fill='%2399a3b2'/>
+            </g>
+          </svg>`);
+
+      let currentImg = defaultImg;
+
+      photoInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          currentImg = reader.result;
+          updatePreview();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      function updatePreview() {
+        preview.innerHTML = `
+          <div class='card'>
+            <img src='${currentImg}' alt='photo'/>
+            <div>
+              <div style='font-size:18px;font-weight:600;'>${nameInput.value}</div>
+              <div style='color:#94a3b8;font-size:14px;'>Real community participant</div>
+              <div class='badge'>${levelInput.value}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      function resetForm() {
+        nameInput.value = "Real Bulkoor";
+        levelInput.value = "Bullish";
+        currentImg = defaultImg;
+        photoInput.value = "";
+        updatePreview();
+      }
+
+      function downloadCard() {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const width = 1200;
+        const height = 760;
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, width, height);
+
+        const img = new Image();
+        img.src = currentImg;
+        img.onload = () => {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(240, 380, 180, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(img, 60, 200, 360, 360);
+          ctx.restore();
+
+          ctx.fillStyle = "white";
+          ctx.font = "bold 56px Inter, system-ui";
+          ctx.fillText(nameInput.value, 480, 320);
+
+          ctx.fillStyle = "#94a3b8";
+          ctx.font = "28px Inter, system-ui";
+          ctx.fillText("Real community participant", 480, 380);
+
+          ctx.fillStyle = "#06b6d4";
+          ctx.font = "bold 36px Inter, system-ui";
+          ctx.fillText(levelInput.value, 480, 460);
+
+          const link = document.createElement("a");
+          link.download = nameInput.value.replace(/\\s+/g, "_") + "_bulkoor.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        };
+      }
+
+      updatePreview();
+    </script>
   </body>
 </html>

@@ -5,9 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Real Bulkoor — Card Generator</title>
     <link rel="icon" href="/favicon.ico" />
-    <script type="module" crossorigin src="/main.jsx"></script>
+    <!-- React + ReactDOM (CDN) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Babel для JSX у браузері -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
-  <body class="bg-slate-50">
+  <body style="background:#f8fafc; margin:0;">
     <div id="root"></div>
+
+    <!-- Наші JSX-файли (тип: text/babel) -->
+    <script type="text/babel" src="/App.jsx"></script>
+    <script type="text/babel" src="/main.jsx"></script>
   </body>
 </html>

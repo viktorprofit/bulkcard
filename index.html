@@ -1,275 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Real Bulkoor — Passport Card</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-      :root{
-        /* BULK — dark mode with brand accents */
-        --bg-1:#1B1A14; --bg-2:#0E0D0A;
-        --ink:#161513;  --ink-2:#1F1E19;
-        --text:#EDECE3; --muted:#C6B6BA;
-        --accent:#5A2C40; --accent-2:#736A6C;
-        --foil-1:#5A2C40; --foil-2:#C6B6BA; --foil-3:#F9F8ED;
-      }
-      *{box-sizing:border-box}
-      html,body{height:100%}
-      body{
-        margin:0; color:var(--text);
-        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        background:
-          radial-gradient(1200px 800px at 10% 12%, rgba(198,182,186,.08) 0%, transparent 60%),
-          radial-gradient(1100px 800px at 92% 88%, rgba(90,44,64,.12) 0%, transparent 60%),
-          linear-gradient(135deg, var(--bg-1), var(--bg-2));
-      }
-      .wrap{max-width:1200px; margin:0 auto; padding:28px 20px 60px; display:grid; gap:28px}
-      .title{font-family:Fraunces, serif; font-weight:700; font-size:28px; margin:6px 0 0}
-      .subtitle{color:var(--muted); font-size:13px; margin:6px 0 0}
+<head>
+  <meta charset="utf-8" />
+  <title>Real Bulkoor — Passport Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* Bulk dark palette */
+      --bg-1:#1B1A14; --bg-2:#0E0D0A;
+      --ink:#161513;  --ink-2:#1F1E19;
+      --text:#EDECE3; --muted:#C6B6BA;
+      --accent:#5A2C40; --accent-2:#736A6C;
+      --foil-1:#5A2C40; --foil-2:#C6B6BA; --foil-3:#F9F8ED;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(1200px 800px at 10% 12%, rgba(198,182,186,.08) 0%, transparent 60%),
+        radial-gradient(1100px 800px at 92% 88%, rgba(90,44,64,.12) 0%, transparent 60%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+    .wrap{max-width:1200px;margin:0 auto;padding:28px 20px 60px;display:grid;gap:28px}
+    .title{font-family:Fraunces,serif;font-weight:700;font-size:28px;margin:6px 0 0}
+    .subtitle{color:var(--muted);font-size:13px;margin:6px 0 0}
+    .grid{display:grid;grid-template-columns:1fr 700px;gap:28px}
+    @media (max-width:1200px){.grid{grid-template-columns:1fr}}
+    .panel{background:rgba(22,21,19,.6);border:1px solid rgba(237,236,227,.08);border-radius:16px;padding:16px;backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(237,236,227,.04)}
+    .form-row{margin-bottom:14px}
+    .label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    .input,.select{width:100%;padding:12px 13px;border-radius:10px;border:1px solid rgba(237,236,227,.12);background:rgba(15,14,12,.7);color:var(--text);outline:none}
+    .input:focus,.select:focus{border-color:rgba(90,44,64,.6);box-shadow:0 0 0 3px rgba(90,44,64,.25)}
+    .btns{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+    .btn{padding:11px 16px;border-radius:10px;border:1px solid rgba(237,236,227,.18);background:#151411;color:#fff;cursor:pointer;transition:transform .08s ease, box-shadow .2s ease}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.45)}
+    .btn.primary{background:linear-gradient(135deg,#231d1f,#2c1e26);border-color:rgba(90,44,64,.6);box-shadow:0 8px 24px rgba(90,44,64,.25)}
+    .btn.ghost{background:transparent}
+    .card-shell{perspective:1200px}
+    .tilt{display:inline-block;transform-style:preserve-3d;transition:transform .15s ease}
+    canvas{display:block;width:100%;height:auto;border-radius:26px}
+    .hint{margin-top:10px;font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <div class="title">Real Bulkoor — Passport Card</div>
+      <p class="subtitle">Fixed grid & spacing — preview equals export 1:1.</p>
+    </div>
 
-      .grid{display:grid; grid-template-columns: 1fr 700px; gap:28px}
-      @media (max-width: 1200px){.grid{grid-template-columns:1fr}}
-
-      .panel{background: rgba(22,21,19,.6); border:1px solid rgba(237,236,227,.08); border-radius:16px; padding:16px; backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(237,236,227,.04)}
-      .form-row{margin-bottom:14px}
-      .label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
-      .input,.select{width:100%; padding:12px 13px; border-radius:10px; border:1px solid rgba(237,236,227,.12); background:rgba(15,14,12,.7); color:var(--text); outline:none}
-      .input:focus,.select:focus{border-color: rgba(90,44,64,.6); box-shadow: 0 0 0 3px rgba(90,44,64,.25)}
-      .btns{display:flex; gap:10px; margin-top:10px; flex-wrap:wrap}
-      .btn{padding:11px 16px; border-radius:10px; border:1px solid rgba(237,236,227,.18); background:#151411; color:#fff; cursor:pointer; transition:transform .08s ease, box-shadow .2s ease}
-      .btn:hover{transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,0,0,.45)}
-      .btn.primary{background: linear-gradient(135deg, #231d1f, #2c1e26); border-color: rgba(90,44,64,.6); box-shadow: 0 8px 24px rgba(90,44,64,.25)}
-      .btn.ghost{background: transparent}
-
-      /* Preview canvas shell (with subtle 3D tilt) */
-      .card-shell{perspective:1200px}
-      .tilt{display:inline-block; transform-style:preserve-3d; transition:transform .15s ease}
-      canvas{display:block; width:100%; height:auto; border-radius:26px}
-      .hint{margin-top:10px; font-size:12px; color:var(--muted)}
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <div>
-        <div class="title">Real Bulkoor — Passport Card</div>
-        <p class="subtitle">Preview equals export. One canvas renderer, Bulk dark theme, hi-res PNG.</p>
+    <div class="grid">
+      <div class="panel">
+        <div class="form-row">
+          <label class="label">Name</label>
+          <input id="name" class="input" value="Real Bulkoor" />
+        </div>
+        <div class="form-row">
+          <label class="label">Discord</label>
+          <input id="discord" class="input" placeholder="@yourhandle" />
+        </div>
+        <div class="form-row">
+          <label class="label">Bullish level</label>
+          <select id="level" class="select">
+            <option>Not bullish</option>
+            <option>Mild</option>
+            <option selected>Bullish</option>
+            <option>Very bullish</option>
+            <option>Max bullish</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="label">Photo</label>
+          <input id="photo" type="file" accept="image/*" class="input" />
+        </div>
+        <div class="btns">
+          <button class="btn primary" id="downloadBtn">Download card</button>
+          <button class="btn ghost" id="resetBtn">Reset</button>
+        </div>
+        <div class="hint">Tip: clear portrait photo. PNG export is high-res.</div>
       </div>
 
-      <div class="grid">
-        <!-- Controls -->
-        <div class="panel">
-          <div class="form-row">
-            <label class="label">Name</label>
-            <input id="name" class="input" value="Real Bulkoor" />
-          </div>
-
-          <div class="form-row">
-            <label class="label">Discord</label>
-            <input id="discord" class="input" placeholder="@yourhandle" />
-          </div>
-
-          <div class="form-row">
-            <label class="label">Bullish level</label>
-            <select id="level" class="select">
-              <option>Not bullish</option>
-              <option>Mild</option>
-              <option selected>Bullish</option>
-              <option>Very bullish</option>
-              <option>Max bullish</option>
-            </select>
-          </div>
-
-          <div class="form-row">
-            <label class="label">Photo</label>
-            <input id="photo" type="file" accept="image/*" class="input" />
-          </div>
-
-          <div class="btns">
-            <button class="btn primary" id="downloadBtn">Download card</button>
-            <button class="btn ghost" id="resetBtn">Reset</button>
-          </div>
-
-          <div class="hint">Tip: use a clear portrait photo. Export is high-resolution PNG.</div>
-        </div>
-
-        <!-- Preview (same renderer as export) -->
-        <div class="card-shell">
-          <div class="tilt" id="tilt">
-            <canvas id="previewCanvas" width="1000" height="625" aria-label="Passport preview"></canvas>
-          </div>
+      <div class="card-shell">
+        <div class="tilt" id="tilt">
+          <!-- Прев’ю відмальовуємо тим самим рендером -->
+          <canvas id="previewCanvas" width="960" height="600" aria-label="Passport preview"></canvas>
         </div>
       </div>
     </div>
+  </div>
 
-    <script>
-      // --- State & elements ---
-      const elName = document.getElementById('name');
-      const elDiscord = document.getElementById('discord');
-      const elLevel = document.getElementById('level');
-      const elPhoto = document.getElementById('photo');
-      const tilt = document.getElementById('tilt');
-      const pvCanvas = document.getElementById('previewCanvas');
-      const pvCtx = pvCanvas.getContext('2d');
+  <script>
+    /* ====== State & elements ====== */
+    const elName = document.getElementById('name');
+    const elDiscord = document.getElementById('discord');
+    const elLevel = document.getElementById('level');
+    const elPhoto = document.getElementById('photo');
+    const tilt = document.getElementById('tilt');
+    const pvCanvas = document.getElementById('previewCanvas');
+    const pvCtx = pvCanvas.getContext('2d');
 
-      const DEFAULT_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(`
-        <svg xmlns='http://www.w3.org/2000/svg' width='800' height='1024' viewBox='0 0 24 24' fill='none'>
-          <rect width='24' height='24' rx='4' fill='%232b2f3a'/>
-          <g transform='translate(5,4) scale(0.75)'>
-            <circle cx='7.5' cy='6.5' r='3.5' fill='%2399a3b2'/>
-            <rect x='1.5' y='12.5' width='12' height='7' rx='3.2' fill='%2399a3b2'/>
-          </g>
-        </svg>`);
-      let imgSrc = DEFAULT_IMG;
-      let idCounter = 1;
-      let memberId = makeId();
-      let validThru = '∞';
+    const DEFAULT_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(`
+      <svg xmlns='http://www.w3.org/2000/svg' width='800' height='1024' viewBox='0 0 24 24' fill='none'>
+        <rect width='24' height='24' rx='4' fill='%232b2f3a'/>
+        <g transform='translate(5,4) scale(0.75)'>
+          <circle cx='7.5' cy='6.5' r='3.5' fill='%2399a3b2'/>
+          <rect x='1.5' y='12.5' width='12' height='7' rx='3.2' fill='%2399a3b2'/>
+        </g>
+      </svg>`);
+    let imgSrc = DEFAULT_IMG;
+    let idCounter = 1;
+    let memberId = makeId();
+    const validThru = '∞';
 
-      // --- Render both preview and export with one function ---
-      function renderCard(ctx, W, H, data){
-        const {
-          name, discord, bullish, imgSrc,
-          theme = {
-            ink:getVar('--ink'),
-            ink2:getVar('--ink-2'),
-            text:getVar('--text'),
-            muted:getVar('--muted'),
-            foil1:getVar('--foil-1'),
-            foil2:getVar('--foil-2'),
-            foil3:getVar('--foil-3'),
-          }
-        } = data;
+    /* ====== Core renderer (preview & export share this) ====== */
+    async function renderCard(ctx, W, H, data){
+      const t = {
+        ink:getVar('--ink'), ink2:getVar('--ink-2'),
+        text:getVar('--text'), muted:getVar('--muted'),
+        foil1:getVar('--foil-1'), foil2:getVar('--foil-2'), foil3:getVar('--foil-3')
+      };
+      const P = 36;                 // outer padding inside foil
+      const R = 26;                 // inner radius
+      const COL = Math.round((W - 2*P) * 0.42); // left column width (photo area)
+      const G = 28;                 // gap between columns
+      const innerX = 12, innerY = 12, innerW = W - 24, innerH = H - 24;
 
-        // Foil border
-        const foil=ctx.createLinearGradient(0,0,W,H);
-        foil.addColorStop(0, theme.foil1);
-        foil.addColorStop(.5, theme.foil2);
-        foil.addColorStop(1, theme.foil3);
-        ctx.fillStyle=foil; rr(ctx,0,0,W,H,34,true);
+      // Foil border
+      const foil=ctx.createLinearGradient(0,0,W,H);
+      foil.addColorStop(0,t.foil1); foil.addColorStop(.5,t.foil2); foil.addColorStop(1,t.foil3);
+      ctx.fillStyle=foil; rr(ctx,0,0,W,H,R+8,true);
 
-        // Inner
-        ctx.save(); ctx.translate(12,12);
-        const innerW=W-24, innerH=H-24;
-        const inner=ctx.createLinearGradient(0,0,0,innerH);
-        inner.addColorStop(0, theme.ink);
-        inner.addColorStop(1, theme.ink2);
-        ctx.fillStyle=inner; rr(ctx,0,0,innerW,innerH,28,true);
+      // Inner background
+      ctx.save(); ctx.translate(innerX,innerY);
+      const bg = ctx.createLinearGradient(0,0,0,innerH);
+      bg.addColorStop(0,t.ink); bg.addColorStop(1,t.ink2);
+      ctx.fillStyle=bg; rr(ctx,0,0,innerW,innerH,R,true);
 
-        // soft vignettes
-        const g1=ctx.createRadialGradient(0,0,0,0,0,innerW*1.1);
-        g1.addColorStop(0,'rgba(115,106,108,.18)'); g1.addColorStop(1,'transparent');
-        ctx.fillStyle=g1; rr(ctx,0,0,innerW,innerH,28,true);
-        const g2=ctx.createRadialGradient(innerW,innerH,0,innerW,innerH,innerW*1.1);
-        g2.addColorStop(0,'rgba(90,44,64,.20)'); g2.addColorStop(1,'transparent');
-        ctx.fillStyle=g2; rr(ctx,0,0,innerW,innerH,28,true);
+      // Soft vignettes
+      const g1=ctx.createRadialGradient(0,0,0,0,0,innerW*1.1);
+      g1.addColorStop(0,'rgba(115,106,108,.14)'); g1.addColorStop(1,'transparent');
+      ctx.fillStyle=g1; rr(ctx,0,0,innerW,innerH,R,true);
+      const g2=ctx.createRadialGradient(innerW,innerH,0,innerW,innerH,innerW*1.1);
+      g2.addColorStop(0,'rgba(90,44,64,.18)'); g2.addColorStop(1,'transparent');
+      ctx.fillStyle=g2; rr(ctx,0,0,innerW,innerH,R,true);
 
-        // brand + chip
-        ctx.fillStyle=theme.text; ctx.font='700 40px Fraunces, serif'; ctx.fillText('Bulk Identity', 24, 58);
-        drawChip(ctx, innerW-96, 24, 72, 50);
+      // Header and chip, aligned to grid
+      ctx.fillStyle=t.text; ctx.font='700 36px Fraunces, serif';
+      ctx.fillText('Bulk Identity', P+0.5, P+36);
+      drawChip(ctx, innerW - P - 64, P-6, 56, 40);
 
-        // load image
-        const img = new Image(); img.crossOrigin='anonymous'; img.src = imgSrc;
-        return new Promise(res=>{
-          img.onload = ()=>{
-            const ax=60, ay=180, aw=380, ah=490, ar=18;
-            ctx.fillStyle='rgba(237,236,227,.06)'; rr(ctx, ax-6, ay-6, aw+12, ah+12, ar+6,true);
-            ctx.strokeStyle='rgba(237,236,227,.18)'; ctx.lineWidth=1.2; rrS(ctx, ax-6, ay-6, aw+12, ah+12, ar+6);
-            rrP(ctx, ax, ay, aw, ah, ar); ctx.save(); ctx.clip(); ctx.drawImage(img, ax, ay, aw, ah); ctx.restore();
+      // Left column: photo frame (square, perfectly aligned)
+      const ph = innerH - P*2 - 84;               // leave room for footer
+      const photoSize = Math.min(COL, ph);
+      const photoX = P + 0.5;
+      const photoY = P + 28 + 0.5;               // under header
+      ctx.fillStyle='rgba(237,236,227,.06)';
+      rr(ctx, photoX-6, photoY-6, photoSize+12, photoSize+12, 18,true);
+      ctx.strokeStyle='rgba(237,236,227,.16)'; ctx.lineWidth=1;
+      rrS(ctx, photoX-6, photoY-6, photoSize+12, photoSize+12, 18);
 
-            // labels
-            ctx.fillStyle=theme.text; ctx.font='700 44px Fraunces, serif'; ctx.fillText(name || 'Real Bulkoor', 480, 250);
+      const img = await loadImage(data.imgSrc);
+      rrP(ctx, photoX, photoY, photoSize, photoSize, 14); ctx.save(); ctx.clip();
+      ctx.drawImage(img, photoX, photoY, photoSize, photoSize); ctx.restore();
 
-            ctx.fillStyle=getVar('--muted'); ctx.font='600 18px Inter, system-ui';
-            ctx.fillText('Name', 480, 210); ctx.fillText('Discord', 480, 290);
-            ctx.fillText('Bullish', 480, 370); ctx.fillText('Member ID', 480, 450);
-            ctx.fillText('Valid Thru', 480, 530);
+      // Right column base position
+      const rx = P + COL + G;
+      let y = photoY + 6;
 
-            ctx.fillStyle=theme.text; ctx.font='700 26px Inter, system-ui';
-            ctx.fillText(formatDiscord(discord), 480, 330);
-            ctx.fillText(bullish, 480, 410);
-            ctx.fillText(memberId, 480, 490);
-            ctx.fillText(validThru, 480, 570);
+      // Field helpers
+      const key = (label)=>{ ctx.fillStyle=t.muted; ctx.font='600 16px Inter, system-ui'; ctx.fillText(label, rx+0.5, y); y += 24; };
+      const val = (text, big=false, fancy=false)=>{
+        ctx.fillStyle=t.text;
+        if(fancy){ ctx.font='700 44px Fraunces, serif'; y += 2; }
+        else if(big){ ctx.font='700 24px Inter, system-ui'; }
+        else { ctx.font='700 18px Inter, system-ui'; }
+        ctx.fillText(text, rx+0.5, y); y += fancy ? 42 : (big ? 32 : 26);
+      };
 
-            // bottom rule & footer
-            ctx.fillStyle='rgba(237,236,227,.14)'; ctx.fillRect(20, innerH-120, innerW-40, 1);
-            ctx.fillStyle=getVar('--muted'); ctx.font='400 20px Inter, system-ui';
-            ctx.fillText('Issued by Bulk Identity Authority · Non-transferable · For community use', 20, innerH-92);
+      // Fields
+      key('Name');      val(data.name || 'Real Bulkoor', false, true);
+      key('Discord');   val(formatDiscord(data.discord), true);
+      key('Bullish');   val(data.bullish, true);
+      key('Member ID'); val(memberId, true);
+      key('Valid Thru');val('∞', true);
 
-            // hologram seal
-            drawSeal(ctx, innerW-170, innerH-180, 130);
+      // Separator line across full grid width (aligned to px)
+      const sepY = photoY + photoSize + 36.5;
+      ctx.strokeStyle='rgba(237,236,227,.14)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(P+0.5, sepY); ctx.lineTo(innerW-P+0.5, sepY); ctx.stroke();
 
-            ctx.restore(); // end inner translate
-            res();
-          };
-        });
-      }
+      // Footer
+      ctx.fillStyle=t.muted; ctx.font='400 18px Inter, system-ui';
+      ctx.fillText('Issued by Bulk Identity Authority · Non-transferable · For community use', P+0.5, sepY+32);
 
-      // --- Helpers (drawing) ---
-      function getVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() }
-      function rr(ctx,x,y,w,h,r,fill){ rrP(ctx,x,y,w,h,r); if(fill) ctx.fill() }
-      function rrS(ctx,x,y,w,h,r){ rrP(ctx,x,y,w,h,r); ctx.stroke() }
-      function rrP(ctx,x,y,w,h,r){ if(w<2*r) r=w/2; if(h<2*r) r=h/2; ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath() }
-      function drawChip(ctx,x,y,w,h){ const g=ctx.createLinearGradient(x,y,x+w,y+h); g.addColorStop(0, '#c6b6ba'); g.addColorStop(1, '#5a2c40'); ctx.globalAlpha=.28; ctx.fillStyle=g; rr(ctx,x,y,w,h,8,true); ctx.globalAlpha=1; ctx.strokeStyle='rgba(237,236,227,.35)'; ctx.lineWidth=1; rrS(ctx,x+.5,y+.5,w-1,h-1,8) }
-      function drawSeal(ctx,cx,cy,r){ const g=ctx.createConicGradient(0,cx,cy); g.addColorStop(0,'rgba(90,44,64,.55)'); g.addColorStop(.5,'rgba(198,182,186,.5)'); g.addColorStop(1,'rgba(249,248,237,.55)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='rgba(237,236,227,.35)'; ctx.setLineDash([6,6]); ctx.lineWidth=1; ctx.beginPath(); ctx.arc(cx,cy,r-6,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle='rgba(0,0,0,.25)'; ctx.font='700 18px Inter, system-ui'; const t='BULK VERIFIED'; const tw=ctx.measureText(t).width; ctx.fillText(t,cx-tw/2,cy+6) }
+      // Hologram seal inside safe area (bottom-right), fully visible
+      const sealR = 110;
+      drawSeal(ctx, innerW - P - sealR, innerH - P - 12 - sealR, sealR);
 
-      // --- Utils ---
-      function formatDiscord(x){ if(!x) return '@handle'; return x.startsWith('@')? x : '@'+x }
-      function makeId(){ return 'BLK-' + String(idCounter++).padStart(6,'0') }
+      ctx.restore(); // end inner
 
-      // --- Preview rendering (same as export) ---
-      async function drawPreview(){
-        // clear
-        pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height);
-        await renderCard(pvCtx, pvCanvas.width, pvCanvas.height, {
-          name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc
-        });
-      }
+    }
 
-      // Inputs -> re-render
-      elName.addEventListener('input', drawPreview);
-      elDiscord.addEventListener('input', drawPreview);
-      elLevel.addEventListener('change', drawPreview);
-      elPhoto.addEventListener('change', (e)=>{
-        const f=e.target.files?.[0]; if(!f) return;
-        const reader=new FileReader();
-        reader.onload=()=>{ imgSrc=reader.result; drawPreview() };
-        reader.readAsDataURL(f);
+    /* ====== Helpers ====== */
+    function getVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() }
+    function rr(ctx,x,y,w,h,r,fill){ rrP(ctx,x,y,w,h,r); if(fill) ctx.fill() }
+    function rrS(ctx,x,y,w,h,r){ rrP(ctx,x,y,w,h,r); ctx.stroke() }
+    function rrP(ctx,x,y,w,h,r){
+      if(w<2*r) r=w/2; if(h<2*r) r=h/2;
+      ctx.beginPath();
+      ctx.moveTo(x+r,y);
+      ctx.arcTo(x+w,y,x+w,y+h,r);
+      ctx.arcTo(x+w,y+h,x,y+h,r);
+      ctx.arcTo(x,y+h,x,y,r);
+      ctx.arcTo(x,y,x+w,y,r);
+      ctx.closePath();
+    }
+    function drawChip(ctx,x,y,w,h){
+      const g=ctx.createLinearGradient(x,y,x+w,y+h);
+      g.addColorStop(0,'#c6b6ba'); g.addColorStop(1,'#5a2c40');
+      ctx.globalAlpha=.28; ctx.fillStyle=g; rr(ctx,x,y,w,h,8,true);
+      ctx.globalAlpha=1; ctx.strokeStyle='rgba(237,236,227,.35)'; ctx.lineWidth=1; rrS(ctx,x+.5,y+.5,w-1,h-1,8);
+    }
+    function drawSeal(ctx,cx,cy,r){
+      const g=ctx.createConicGradient(0,cx,cy);
+      g.addColorStop(0,'rgba(90,44,64,.55)');
+      g.addColorStop(.5,'rgba(198,182,186,.5)');
+      g.addColorStop(1,'rgba(249,248,237,.55)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(237,236,227,.35)'; ctx.setLineDash([6,6]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(cx,cy,r-6,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='rgba(0,0,0,.25)'; ctx.font='700 16px Inter, system-ui';
+      const t='BULK VERIFIED', tw=ctx.measureText(t).width;
+      ctx.fillText(t, cx - tw/2, cy + 6);
+    }
+    function formatDiscord(x){ if(!x) return '@handle'; return x.startsWith('@')? x : '@'+x }
+    function makeId(){ return 'BLK-' + String(idCounter++).padStart(6,'0') }
+    function loadImage(src){ return new Promise(res=>{ const i=new Image(); i.crossOrigin='anonymous'; i.src=src; i.onload=()=>res(i) }) }
+
+    /* ====== Preview / Export glue ====== */
+    async function drawPreview(){
+      pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height);
+      await renderCard(pvCtx, pvCanvas.width, pvCanvas.height, {
+        name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc
       });
+    }
 
-      document.getElementById('resetBtn').addEventListener('click', ()=>{
-        elName.value='Real Bulkoor';
-        elDiscord.value='';
-        elLevel.value='Bullish';
-        elPhoto.value='';
-        imgSrc=DEFAULT_IMG;
-        memberId = makeId();
-        drawPreview();
-      });
+    elName.addEventListener('input', drawPreview);
+    elDiscord.addEventListener('input', drawPreview);
+    elLevel.addEventListener('change', drawPreview);
+    elPhoto.addEventListener('change', (e)=>{
+      const f=e.target.files?.[0]; if(!f) return;
+      const r=new FileReader(); r.onload=()=>{ imgSrc=r.result; drawPreview() }; r.readAsDataURL(f);
+    });
 
-      // 3D tilt (applied to canvas wrapper)
-      tilt.addEventListener('mousemove', (e)=>{
-        const r = tilt.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - .5;
-        const y = (e.clientY - r.top) / r.height - .5;
-        tilt.style.transform = `rotateX(${(y*8).toFixed(2)}deg) rotateY(${(-x*10).toFixed(2)}deg)`;
-      });
-      tilt.addEventListener('mouseleave', ()=>{ tilt.style.transform = 'rotateX(0) rotateY(0)' });
-
-      // Export — same renderer at higher resolution
-      document.getElementById('downloadBtn').addEventListener('click', async ()=>{
-        const W=1600, H=1000; // hi-res
-        const c=document.createElement('canvas'); c.width=W; c.height=H;
-        const ctx=c.getContext('2d');
-        await renderCard(ctx, W, H, {
-          name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc
-        });
-        const a=document.createElement('a');
-        a.download=(elName.value || 'real-bulkoor').replace(/\s+/g,'_').toLowerCase()+'_passport.png';
-        a.href=c.toDataURL('image/png'); a.click();
-      });
-
-      // Initial paint
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      elName.value='Real Bulkoor';
+      elDiscord.value='';
+      elLevel.value='Bullish';
+      elPhoto.value='';
+      imgSrc=DEFAULT_IMG;
+      memberId = makeId();
       drawPreview();
-    </script>
-  </body>
+    });
+
+    // 3D tilt (легкий, без перекосів)
+    tilt.addEventListener('mousemove', (e)=>{
+      const r = tilt.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - .5;
+      const y = (e.clientY - r.top) / r.height - .5;
+      tilt.style.transform = `rotateX(${(y*6).toFixed(2)}deg) rotateY(${(-x*8).toFixed(2)}deg)`;
+    });
+    tilt.addEventListener('mouseleave', ()=>{ tilt.style.transform='rotateX(0) rotateY(0)' });
+
+    // Export (той самий рендер, більша роздільна)
+    document.getElementById('downloadBtn').addEventListener('click', async ()=>{
+      const W=1600, H=1000;
+      const c=document.createElement('canvas'); c.width=W; c.height=H; const ctx=c.getContext('2d');
+      await renderCard(ctx, W, H, { name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc });
+      const a=document.createElement('a');
+      a.download=(elName.value||'real-bulkoor').replace(/\s+/g,'_').toLowerCase()+'_passport.png';
+      a.href=c.toDataURL('image/png'); a.click();
+    });
+
+    // First paint
+    drawPreview();
+  </script>
+</body>
 </html>

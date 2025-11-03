@@ -191,7 +191,7 @@
     tilt.onmousemove=(e)=>{const r=tilt.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;tilt.style.transform=`rotateX(${(y*6).toFixed(2)}deg) rotateY(${(-x*8).toFixed(2)}deg)`};
     tilt.onmouseleave=()=>tilt.style.transform='rotateX(0) rotateY(0)';
 
-    /* === ЄДИНА ЗМІНА: завантажуємо саме той canvas, що на екрані === */
+    /* ЄДИНА ПРАВКА: зберігаємо саме те, що бачиш на екрані */
     document.getElementById('downloadBtn').onclick=()=>{
       const a=document.createElement('a');
       a.download=(elName.value||'real-bulkoor').trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')+'_passport.png';

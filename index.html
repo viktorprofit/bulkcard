@@ -183,7 +183,12 @@
     function makeId(){ return 'BLK-' + String(idCounter++).padStart(6,'0') }
     function loadImage(src){ return new Promise(res=>{ const i=new Image(); i.crossOrigin='anonymous'; i.src=src; i.onload=()=>res(i) }) }
 
-    async function drawPreview(){ pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height); await renderCard(pvCtx, pvCanvas.width, pvCanvas.height, { name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc }); }
+    async function drawPreview(){
+      pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height);
+      await renderCard(pvCtx, pvCanvas.width, pvCanvas.height, {
+        name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc
+      });
+    }
 
     elName.oninput=elDiscord.oninput=()=>drawPreview(); elLevel.onchange=drawPreview;
     elPhoto.onchange=(e)=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{imgSrc=r.result;drawPreview()};r.readAsDataURL(f)};
@@ -191,10 +196,12 @@
     tilt.onmousemove=(e)=>{const r=tilt.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;tilt.style.transform=`rotateX(${(y*6).toFixed(2)}deg) rotateY(${(-x*8).toFixed(2)}deg)`};
     tilt.onmouseleave=()=>tilt.style.transform='rotateX(0) rotateY(0)';
 
-    /* ✅ ЛИШЕ ЦЕ: завантажуємо саме поточний canvas */
+    /* ✅ ЄДИНА ПРАВКА: зберігаємо саме той canvas, що на екрані (1:1) */
     document.getElementById('downloadBtn').onclick=()=>{
       const a=document.createElement('a');
-      a.download=(elName.value||'real-bulkoor').trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')+'_passport.png';
+      a.download=(elName.value||'real-bulkoor')
+        .trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')
+        +'_passport.png';
       a.href=pvCanvas.toDataURL('image/png');
       a.click();
     };

@@ -11,7 +11,6 @@
       --bg-1:#1B1A14; --bg-2:#0E0D0A;
       --ink:#161513;  --ink-2:#1F1E19;
       --text:#EDECE3; --muted:#C6B6BA;
-      --accent:#5A2C40; --accent-2:#736A6C;
       --foil-1:#5A2C40; --foil-2:#C6B6BA; --foil-3:#F9F8ED;
     }
     *{box-sizing:border-box}
@@ -177,11 +176,13 @@
       const lineX1 = rx, lineX2 = innerW - P + 0.5;
 
       const drawField = (label, value, opt={})=>{
+        // label
         ctx.fillStyle=T.muted;
         ctx.font='600 16px Inter, system-ui';
         ctx.fillText(label, rx+0.5, y);
         y += FIELD_SP;
 
+        // value
         ctx.fillStyle=T.text;
         if(opt.fancy){ ctx.font='700 44px Fraunces, serif'; }
         else if(opt.big){ ctx.font='700 24px Inter, system-ui'; }
@@ -202,7 +203,7 @@
       drawField('Name',       data.name || 'Real Bulkoor', {fancy:true});
       drawField('Discord',    formatDiscord(data.discord), {big:true});
       drawField('Bullish',    data.bullish, {big:true});
-      drawField('Member ID',  window.memberId, {big:true});
+      drawField('Member ID',  memberId, {big:true});     /* <-- fixed here */
       drawField('Valid Thru', '∞', {big:true});
 
       // footer line
@@ -297,7 +298,9 @@
       const c=document.createElement('canvas'); c.width=W; c.height=H; const ctx=c.getContext('2d');
       await renderCard(ctx, W, H, { name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc });
       const a=document.createElement('a');
-      a.download=(elName.value||'real-bulkoor').replace(/\s+/g,'_').toLowerCase()+'_passport.png';
+      a.download=(elName.value||'real-bulkoor')
+        .trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')
+        + '_passport.png';
       a.href=c.toDataURL('image/png'); a.click();
     });
 

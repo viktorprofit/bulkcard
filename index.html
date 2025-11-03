@@ -11,6 +11,10 @@
       --ink:#161513;  --ink-2:#1F1E19;
       --text:#EDECE3; --muted:#C6B6BA;
       --foil-1:#5A2C40; --foil-2:#C6B6BA; --foil-3:#F9F8ED;
+
+      /* дизайн-полотно (однакове для прев’ю та PNG) */
+      --design-w: 1600;
+      --design-h: 1000;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -39,7 +43,10 @@
     .btn.ghost{background:transparent}
     .card-shell{perspective:1200px}
     .tilt{display:inline-block;transform-style:preserve-3d;transition:transform .15s ease}
-    canvas{display:block;width:100%;height:auto;border-radius:26px}
+
+    /* важливо: канвас має БУФЕР 1600×1000, але показуємо його зменшеним */
+    canvas{display:block;max-width:100%;height:auto;border-radius:26px}
+
     .hint{margin-top:10px;font-size:12px;color:var(--muted)}
   </style>
 </head>
@@ -47,7 +54,7 @@
   <div class="wrap">
     <div>
       <div class="title">Real Bulkoor — Passport Card</div>
-      <p class="subtitle">Fixed grid & spacing — preview equals export 1:1.</p>
+      <p class="subtitle">Preview equals export 1:1. Same buffer, same metrics, same result.</p>
     </div>
 
     <div class="grid">
@@ -78,12 +85,13 @@
           <button class="btn primary" id="downloadBtn">Download card</button>
           <button class="btn ghost" id="resetBtn">Reset</button>
         </div>
-        <div class="hint">Tip: clear portrait photo. PNG export is high-res.</div>
+        <div class="hint">Tip: clear portrait photo. PNG export is high-res (1600×1000).</div>
       </div>
 
       <div class="card-shell">
         <div class="tilt" id="tilt">
-          <canvas id="previewCanvas" width="960" height="600" aria-label="Passport preview"></canvas>
+          <!-- буфер 1600×1000 (той самий, що і PNG) -->
+          <canvas id="previewCanvas" width="1600" height="1000" aria-label="Passport preview"></canvas>
         </div>
       </div>
     </div>
@@ -110,13 +118,14 @@
     let idCounter = 1;
     let memberId = makeId();
 
-    // wait for webfonts to be ready before drawing (prevents fallback font mismatch)
+    // 1) Чекаємо веб-шрифти перед рендером (щоб прев’ю == PNG)
     async function waitFonts() {
       if (document.fonts && document.fonts.ready) {
         try { await document.fonts.ready; } catch(e){}
       }
     }
 
+    // 2) Малюємо картку (той самий код і для прев’ю, і для PNG)
     async function renderCard(ctx, W, H, data){
       const T = {
         ink:getVar('--ink'), ink2:getVar('--ink-2'),
@@ -125,7 +134,7 @@
       };
 
       const OUT_R = 34, IN_R = 26, P = 36, COL_L = Math.round((W - 2*P) * 0.42), GAP = 28, TITLE_H = 48, FIELD_SP = 14, FIELD_GAP = 20;
-      const LINE_MARGIN = 2; // відступ між нижнім краєм гліфів і рискою (у пікселях, масштабується коректно)
+      const LINE_MARGIN = 2; // текст трохи над самою лінією
 
       // frame
       const foil=ctx.createLinearGradient(0,0,W,H);
@@ -163,12 +172,12 @@
       const lineX1 = rx, lineX2 = innerW - P + 0.5;
 
       const drawField = (label, value, opt={})=>{
-        // label (top-aligned)
+        // label
         ctx.textBaseline='top';
         ctx.fillStyle=T.muted; ctx.font='600 16px Inter, system-ui';
         ctx.fillText(label, rx+0.5, y);
 
-        // value: exact metrics → baseline and divider
+        // value: точні метрики + лінія
         y += FIELD_SP;
         if (opt.fancy){ ctx.font='700 44px Fraunces, serif'; }
         else if (opt.big){ ctx.font='700 24px Inter, system-ui'; }
@@ -176,32 +185,28 @@
 
         ctx.fillStyle=T.text;
         ctx.textBaseline='alphabetic';
-
-        // measure real glyph metrics
         const m = ctx.measureText(value);
         const ascent  = m.actualBoundingBoxAscent || 0;
-        const descent = m.actualBoundingBoxDescent || 0;
+        const baselineY = y + ascent;
+        ctx.fillText(value, rx+0.5, baselineY - LINE_MARGIN); // трішки вище лінії
 
-        const baselineY = y + ascent;               // ставимо baseline так, щоб top = y
-        ctx.fillText(value, rx+0.5, baselineY);
-
-        const lineY = baselineY + LINE_MARGIN;      // лінія трохи нижче гліфів
+        const lineY = baselineY + 0.5; // сама лінія
         ctx.strokeStyle='rgba(237,236,227,.14)'; ctx.lineWidth=1;
-        ctx.beginPath(); ctx.moveTo(lineX1+0.5, lineY+0.5); ctx.lineTo(lineX2, lineY+0.5); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(lineX1+0.5, lineY); ctx.lineTo(lineX2, lineY); ctx.stroke();
 
-        // наступне поле: від лінії, не від "fontSize"
         y = lineY + FIELD_GAP;
       };
 
       drawField('Name',       data.name || 'Real Bulkoor', {fancy:true});
-      drawField('Discord',    formatDiscord(data.discord), {big:true}); // @handle
-      drawField('Bullish',    data.bullish, {big:true});               // Bullish
-      drawField('Member ID',  memberId, {big:true});                    // BLK-...
-      drawField('Valid Thru', '∞', {big:true});                         // останній пункт
+      drawField('Discord',    formatDiscord(data.discord), {big:true});
+      drawField('Bullish',    data.bullish, {big:true});
+      drawField('Member ID',  memberId, {big:true});
+      drawField('Valid Thru', '∞', {big:true});
 
       ctx.restore();
     }
 
+    // helpers
     function getVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() }
     function rr(ctx,x,y,w,h,r,fill){ rrP(ctx,x,y,w,h,r); if(fill) ctx.fill() }
     function rrS(ctx,x,y,w,h,r){ rrP(ctx,x,y,w,h,r); ctx.stroke() }
@@ -211,7 +216,7 @@
     function makeId(){ return 'BLK-' + String(idCounter++).padStart(6,'0') }
     function loadImage(src){ return new Promise(res=>{ const i=new Image(); i.crossOrigin='anonymous'; i.src=src; i.onload=()=>res(i) }) }
 
-    // preview / export glue with font wait
+    // 3) Рендер прев’ю (той самий буфер, що й PNG)
     async function drawPreview(){
       await waitFonts();
       pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height);
@@ -220,6 +225,7 @@
       });
     }
 
+    // input events
     elName.oninput=elDiscord.oninput=()=>drawPreview();
     elLevel.onchange=drawPreview;
     elPhoto.onchange=(e)=>{
@@ -227,22 +233,31 @@
       const r=new FileReader(); r.onload=()=>{ imgSrc=r.result; drawPreview() }; r.readAsDataURL(f);
     };
 
-    document.getElementById('resetBtn').onclick=()=>{ elName.value='Real Bulkoor'; elDiscord.value=''; elLevel.value='Bullish'; elPhoto.value=''; imgSrc=DEFAULT_IMG; memberId=makeId(); drawPreview(); };
+    document.getElementById('resetBtn').onclick=()=>{
+      elName.value='Real Bulkoor';
+      elDiscord.value='';
+      elLevel.value='Bullish';
+      elPhoto.value='';
+      imgSrc=DEFAULT_IMG;
+      memberId=makeId();
+      drawPreview();
+    };
 
+    // tilt effect (візуал, не впливає на PNG)
     tilt.onmousemove=(e)=>{const r=tilt.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;tilt.style.transform=`rotateX(${(y*6).toFixed(2)}deg) rotateY(${(-x*8).toFixed(2)}deg)`};
     tilt.onmouseleave=()=>tilt.style.transform='rotateX(0) rotateY(0)';
 
+    // 4) Завантаження: беремо ТОЙ САМИЙ canvas (100% ідентично)
     document.getElementById('downloadBtn').onclick=async()=>{
-      await waitFonts(); // гарантуємо ті самі шрифти для PNG
-      const W=1600, H=1000;
-      const c=document.createElement('canvas'); c.width=W; c.height=H; const ctx=c.getContext('2d');
-      await renderCard(ctx, W, H, { name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc });
+      await waitFonts();
+      // додаткового ререндеру НЕ робимо — PNG з того ж буфера
       const a=document.createElement('a');
       a.download=(elName.value||'real-bulkoor').trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')+'_passport.png';
-      a.href=c.toDataURL('image/png'); a.click();
+      a.href=pvCanvas.toDataURL('image/png');
+      a.click();
     };
 
-    // first paint (after fonts)
+    // first paint
     drawPreview();
   </script>
 </body>

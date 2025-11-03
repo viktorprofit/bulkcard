@@ -110,6 +110,13 @@
     let idCounter = 1;
     let memberId = makeId();
 
+    // wait for webfonts to be ready before drawing (prevents fallback font mismatch)
+    async function waitFonts() {
+      if (document.fonts && document.fonts.ready) {
+        try { await document.fonts.ready; } catch(e){}
+      }
+    }
+
     async function renderCard(ctx, W, H, data){
       const T = {
         ink:getVar('--ink'), ink2:getVar('--ink-2'),
@@ -118,7 +125,7 @@
       };
 
       const OUT_R = 34, IN_R = 26, P = 36, COL_L = Math.round((W - 2*P) * 0.42), GAP = 28, TITLE_H = 48, FIELD_SP = 14, FIELD_GAP = 20;
-      const BASELINE_OFFSET = 2; // <-- мікро-офсет: піднімаємо текст над лінією на 2px
+      const LINE_MARGIN = 2; // відступ між нижнім краєм гліфів і рискою (у пікселях, масштабується коректно)
 
       // frame
       const foil=ctx.createLinearGradient(0,0,W,H);
@@ -156,30 +163,33 @@
       const lineX1 = rx, lineX2 = innerW - P + 0.5;
 
       const drawField = (label, value, opt={})=>{
-        // label (top)
+        // label (top-aligned)
         ctx.textBaseline='top';
-        ctx.fillStyle=T.muted; ctx.font='600 16px Inter, system-ui'; ctx.fillText(label, rx+0.5, y);
+        ctx.fillStyle=T.muted; ctx.font='600 16px Inter, system-ui';
+        ctx.fillText(label, rx+0.5, y);
 
-        // value — baseline трохи ВИЩЕ лінії
+        // value: exact metrics → baseline and divider
         y += FIELD_SP;
-        let fontSpec, fontSize;
-        if (opt.fancy){ fontSpec='700 44px Fraunces, serif'; fontSize=44; }
-        else if (opt.big){ fontSpec='700 24px Inter, system-ui'; fontSize=24; }
-        else { fontSpec='700 18px Inter, system-ui'; fontSize=18; }
+        if (opt.fancy){ ctx.font='700 44px Fraunces, serif'; }
+        else if (opt.big){ ctx.font='700 24px Inter, system-ui'; }
+        else { ctx.font='700 18px Inter, system-ui'; }
 
-        ctx.font = fontSpec;
-        ctx.fillStyle = T.text;
+        ctx.fillStyle=T.text;
         ctx.textBaseline='alphabetic';
 
-        const lineY = y + fontSize;                    // координата лінії
-        const textBaselineY = lineY - BASELINE_OFFSET; // baseline трохи вище лінії
-        ctx.fillText(value, rx+0.5, textBaselineY);
+        // measure real glyph metrics
+        const m = ctx.measureText(value);
+        const ascent  = m.actualBoundingBoxAscent || 0;
+        const descent = m.actualBoundingBoxDescent || 0;
 
-        // divider (без змін)
+        const baselineY = y + ascent;               // ставимо baseline так, щоб top = y
+        ctx.fillText(value, rx+0.5, baselineY);
+
+        const lineY = baselineY + LINE_MARGIN;      // лінія трохи нижче гліфів
         ctx.strokeStyle='rgba(237,236,227,.14)'; ctx.lineWidth=1;
         ctx.beginPath(); ctx.moveTo(lineX1+0.5, lineY+0.5); ctx.lineTo(lineX2, lineY+0.5); ctx.stroke();
 
-        // до наступного поля: зберігаємо твій FIELD_GAP
+        // наступне поле: від лінії, не від "fontSize"
         y = lineY + FIELD_GAP;
       };
 
@@ -201,19 +211,38 @@
     function makeId(){ return 'BLK-' + String(idCounter++).padStart(6,'0') }
     function loadImage(src){ return new Promise(res=>{ const i=new Image(); i.crossOrigin='anonymous'; i.src=src; i.onload=()=>res(i) }) }
 
+    // preview / export glue with font wait
     async function drawPreview(){
+      await waitFonts();
       pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height);
       await renderCard(pvCtx, pvCanvas.width, pvCanvas.height, {
         name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc
       });
     }
 
-    elName.oninput=elDiscord.oninput=()=>drawPreview(); elLevel.onchange=drawPreview;
-    elPhoto.onchange=(e)=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{imgSrc=r.result;drawPreview()};r.readAsDataURL(f)};
-    document.getElementById('resetBtn').onclick=()=>{elName.value='Real Bulkoor';elDiscord.value='';elLevel.value='Bullish';elPhoto.value='';imgSrc=DEFAULT_IMG;memberId=makeId();drawPreview()};
+    elName.oninput=elDiscord.oninput=()=>drawPreview();
+    elLevel.onchange=drawPreview;
+    elPhoto.onchange=(e)=>{
+      const f=e.target.files?.[0]; if(!f) return;
+      const r=new FileReader(); r.onload=()=>{ imgSrc=r.result; drawPreview() }; r.readAsDataURL(f);
+    };
+
+    document.getElementById('resetBtn').onclick=()=>{ elName.value='Real Bulkoor'; elDiscord.value=''; elLevel.value='Bullish'; elPhoto.value=''; imgSrc=DEFAULT_IMG; memberId=makeId(); drawPreview(); };
+
     tilt.onmousemove=(e)=>{const r=tilt.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;tilt.style.transform=`rotateX(${(y*6).toFixed(2)}deg) rotateY(${(-x*8).toFixed(2)}deg)`};
     tilt.onmouseleave=()=>tilt.style.transform='rotateX(0) rotateY(0)';
-    document.getElementById('downloadBtn').onclick=async()=>{const W=1600,H=1000;const c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');await renderCard(ctx,W,H,{name:elName.value,discord:elDiscord.value,bullish:elLevel.value,imgSrc});const a=document.createElement('a');a.download=(elName.value||'real-bulkoor').trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')+'_passport.png';a.href=c.toDataURL('image/png');a.click();};
+
+    document.getElementById('downloadBtn').onclick=async()=>{
+      await waitFonts(); // гарантуємо ті самі шрифти для PNG
+      const W=1600, H=1000;
+      const c=document.createElement('canvas'); c.width=W; c.height=H; const ctx=c.getContext('2d');
+      await renderCard(ctx, W, H, { name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc });
+      const a=document.createElement('a');
+      a.download=(elName.value||'real-bulkoor').trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')+'_passport.png';
+      a.href=c.toDataURL('image/png'); a.click();
+    };
+
+    // first paint (after fonts)
     drawPreview();
   </script>
 </body>

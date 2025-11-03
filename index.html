@@ -110,24 +110,6 @@
     let idCounter = 1;
     let memberId = makeId();
 
-    const BASELINE_OFFSET = 2;
-
-    // ★ Синхронізація DPI, щоб прев’ю і PNG були 1:1
-    function syncCanvasDPI() {
-      const dpr = window.devicePixelRatio || 1;
-      const cssW = pvCanvas.clientWidth;
-      const cssH = pvCanvas.clientHeight;
-
-      // масштабувати бекінг-стор, ЩОБ ВІДМАЛЬОВУВАЛОСЬ ЧІТКО
-      const needW = Math.round(cssW * dpr);
-      const needH = Math.round(cssH * dpr);
-      if (pvCanvas.width !== needW || pvCanvas.height !== needH) {
-        pvCanvas.width = needW;
-        pvCanvas.height = needH;
-      }
-      pvCtx.setTransform(dpr, 0, 0, dpr, 0, 0); // малюємо в CSS-пікселях
-    }
-
     async function renderCard(ctx, W, H, data){
       const T = {
         ink:getVar('--ink'), ink2:getVar('--ink-2'),
@@ -136,6 +118,7 @@
       };
 
       const OUT_R = 34, IN_R = 26, P = 36, COL_L = Math.round((W - 2*P) * 0.42), GAP = 28, TITLE_H = 48, FIELD_SP = 14, FIELD_GAP = 20;
+      const BASELINE_OFFSET = 2;
 
       const foil=ctx.createLinearGradient(0,0,W,H);
       foil.addColorStop(0,T.foil1); foil.addColorStop(.5,T.foil2); foil.addColorStop(1,T.foil3);
@@ -171,7 +154,6 @@
         ctx.textBaseline='top';
         ctx.fillStyle=T.muted; ctx.font='600 16px Inter, system-ui'; ctx.fillText(label, rx+0.5, y);
         y += FIELD_SP;
-
         let fontSpec, fontSize;
         if (opt.fancy){ fontSpec='700 44px Fraunces, serif'; fontSize=44; }
         else if (opt.big){ fontSpec='700 24px Inter, system-ui'; fontSize=24; }
@@ -191,10 +173,10 @@
         y = lineY + FIELD_GAP;
       };
 
-      drawField('Name', data.name || 'Real Bulkoor', {fancy:true});
-      drawField('Discord', formatDiscord(data.discord), {big:true});
-      drawField('Bullish', data.bullish, {big:true});
-      drawField('Member ID', memberId, {big:true});
+      drawField('Name',       data.name || 'Real Bulkoor', {fancy:true});
+      drawField('Discord',    formatDiscord(data.discord), {big:true});
+      drawField('Bullish',    data.bullish, {big:true});
+      drawField('Member ID',  memberId, {big:true});
       drawField('Valid Thru', '∞', {big:true});
 
       ctx.restore();
@@ -210,10 +192,8 @@
     function loadImage(src){ return new Promise(res=>{ const i=new Image(); i.crossOrigin='anonymous'; i.src=src; i.onload=()=>res(i) }) }
 
     async function drawPreview(){
-      syncCanvasDPI(); // ★ гарантуємо, що прев’ю і PNG — однаковий растер
       pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height);
-      // Малюємо в CSS-пікселях (контекст уже масштабується setTransform(dpr,...))
-      await renderCard(pvCtx, pvCanvas.clientWidth, pvCanvas.clientHeight, {
+      await renderCard(pvCtx, pvCanvas.width, pvCanvas.height, {
         name: elName.value, discord: elDiscord.value, bullish: elLevel.value, imgSrc
       });
     }
@@ -224,18 +204,22 @@
     tilt.onmousemove=(e)=>{const r=tilt.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;tilt.style.transform=`rotateX(${(y*6).toFixed(2)}deg) rotateY(${(-x*8).toFixed(2)}deg)`};
     tilt.onmouseleave=()=>tilt.style.transform='rotateX(0) rotateY(0)';
 
-    // ★ Збереження саме того растеру, що на екрані
+    // ✅ Єдина зміна: збереження точного зображення, як на екрані
     document.getElementById('downloadBtn').onclick=()=>{
-      const a=document.createElement('a');
-      a.download=(elName.value||'real-bulkoor')
+      const dpr = window.devicePixelRatio || 1;
+      const canvas = document.createElement('canvas');
+      canvas.width = pvCanvas.clientWidth * dpr;
+      canvas.height = pvCanvas.clientHeight * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.drawImage(pvCanvas, 0, 0, pvCanvas.clientWidth, pvCanvas.clientHeight);
+      const a = document.createElement('a');
+      a.download = (elName.value||'real-bulkoor')
         .trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')
-        +'_passport.png';
-      a.href=pvCanvas.toDataURL('image/png'); // 1:1 з прев’ю
+        + '_passport.png';
+      a.href = canvas.toDataURL('image/png');
       a.click();
     };
-
-    // ★ Перемальовуємо при ресайзі, щоб прев’ю/PNG лишались ідентичні
-    window.addEventListener('resize', drawPreview, {passive:true});
 
     drawPreview();
   </script>

@@ -4,44 +4,137 @@
   <meta charset="utf-8" />
   <title>Real Bulkoor — Passport Card</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-1: #1B1A14;
+      --bg-2: #14130F;
+      --text: #EDEBE6;
+      --muted: #A8A59C;
+      --border: #2B2A25;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      background: var(--bg-1);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .card {
+      width: 340px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.4);
+      padding: 32px 28px;
+    }
+
+    .title {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 22px;
+      letter-spacing: 0.02em;
+    }
+
+    .row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .row:last-child {
+      border-bottom: none;
+    }
+
+    .value {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 60%;
+    }
+
+    .dots {
+      flex: 1 1 auto;
+      border-bottom: 1px dotted rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
+      min-width: 16px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    @media (max-width: 400px) {
+      .card {
+        width: 90%;
+        padding: 24px 20px;
+      }
+      .value {
+        font-size: 14px;
+        max-width: 55%;
+      }
+    }
+  </style>
 </head>
-<body style="margin:0;background:#1B1A14;color:#EDEBE6;min-height:100vh;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
-  <div style="width:340px;background:#14130F;border:1px solid #2B2A25;border-radius:12px;box-shadow:0 0 18px rgba(0,0,0,.4);padding:32px 28px;">
-    <h1 style="margin:0 0 22px;text-align:center;font-family:'Fraunces',serif;font-weight:700;font-size:18px;letter-spacing:.02em;">Real Bulkoor — Passport Card</h1>
+<body>
+  <div class="card">
+    <div class="title">Real Bulkoor — Passport Card</div>
 
-    <!-- ROW -->
-    <div style="display:flex;align-items:baseline;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);">
-      <span style="font-family:'Fraunces',serif;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;">Real Bulkoor</span>
-      <span style="flex:1 1 auto;border-bottom:1px dotted rgba(255,255,255,.16);transform:translateY(-2px);min-width:16px;"></span>
-      <span style="color:#A8A59C;font-size:11px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;text-align:right;">Name</span>
+    <div class="row">
+      <span class="value">Real Bulkoor</span>
+      <span class="dots"></span>
+      <span class="label">Name</span>
     </div>
 
-    <!-- ROW -->
-    <div style="display:flex;align-items:baseline;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);">
-      <span style="font-family:'Fraunces',serif;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;">@handle</span>
-      <span style="flex:1 1 auto;border-bottom:1px dotted rgba(255,255,255,.16);transform:translateY(-2px);min-width:16px;"></span>
-      <span style="color:#A8A59C;font-size:11px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;text-align:right;">Discord</span>
+    <div class="row">
+      <span class="value">@handle</span>
+      <span class="dots"></span>
+      <span class="label">Discord</span>
     </div>
 
-    <!-- ROW -->
-    <div style="display:flex;align-items:baseline;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);">
-      <span style="font-family:'Fraunces',serif;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;">Bullish</span>
-      <span style="flex:1 1 auto;border-bottom:1px dotted rgba(255,255,255,.16);transform:translateY(-2px);min-width:16px;"></span>
-      <span style="color:#A8A59C;font-size:11px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;text-align:right;">Bullish</span>
+    <div class="row">
+      <span class="value">Bullish</span>
+      <span class="dots"></span>
+      <span class="label">Bullish</span>
     </div>
 
-    <!-- ROW -->
-    <div style="display:flex;align-items:baseline;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);">
-      <span style="font-family:'Fraunces',serif;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;">BLK-000001</span>
-      <span style="flex:1 1 auto;border-bottom:1px dotted rgba(255,255,255,.16);transform:translateY(-2px);min-width:16px;"></span>
-      <span style="color:#A8A59C;font-size:11px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;text-align:right;">Member ID</span>
+    <div class="row">
+      <span class="value">BLK-000001</span>
+      <span class="dots"></span>
+      <span class="label">Member ID</span>
     </div>
 
-    <!-- ROW -->
-    <div style="display:flex;align-items:baseline;gap:8px;padding:10px 0;">
-      <span style="font-family:'Fraunces',serif;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;">∞</span>
-      <span style="flex:1 1 auto;border-bottom:1px dotted rgba(255,255,255,.16);transform:translateY(-2px);min-width:16px;"></span>
-      <span style="color:#A8A59C;font-size:11px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;text-align:right;">Valid Thru</span>
+    <div class="row">
+      <span class="value">∞</span>
+      <span class="dots"></span>
+      <span class="label">Valid Thru</span>
     </div>
   </div>
 </body>

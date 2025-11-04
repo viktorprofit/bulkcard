@@ -111,4 +111,178 @@
     const pvCtx = pvCanvas.getContext('2d');
 
     const DEFAULT_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(`
-      <svg xmlns='http://www.w3.org/2000/svg' width='800' height='1024' v
+      <svg xmlns='http://www.w3.org/2000/svg' width='800' height='1024' viewBox='0 0 24 24' fill='none'>
+        <rect width='24' height='24' rx='4' fill='%232b2f3a'/>
+        <g transform='translate(5,4) scale(0.75)'>
+          <circle cx='7.5' cy='6.5' r='3.5' fill='%2399a3b2'/>
+          <rect x='1.5' y='12.5' width='12' height='7' rx='3.2' fill='%2399a3b2'/>
+        </g>
+      </svg>`);
+    let imgSrc = DEFAULT_IMG;
+    let idCounter = 1;
+    let memberId = makeId();
+
+    async function renderCard(ctx, W, H, data){
+      const T = {
+        ink:getVar('--ink'), ink2:getVar('--ink-2'),
+        text:getVar('--text'), muted:getVar('--muted'),
+        foil1:getVar('--foil-1'), foil2:getVar('--foil-2'), foil3:getVar('--foil-3')
+      };
+
+      const OUT_R = 34, IN_R = 26, P = 36, COL_L = Math.round((W - 2*P) * 0.42), GAP = 28, TITLE_H = 48, FIELD_GAP = 20;
+      const BASELINE_OFFSET = 2;
+
+      // Outer foil
+      const foil=ctx.createLinearGradient(0,0,W,H);
+      foil.addColorStop(0,T.foil1); foil.addColorStop(.5,T.foil2); foil.addColorStop(1,T.foil3);
+      ctx.fillStyle=foil; rr(ctx,0,0,W,H,OUT_R,true);
+
+      // Inner panel
+      const innerX=12, innerY=12, innerW=W-24, innerH=H-24;
+      ctx.save(); ctx.translate(innerX,innerY);
+      const bg=ctx.createLinearGradient(0,0,0,innerH);
+      bg.addColorStop(0,T.ink); bg.addColorStop(1,T.ink2);
+      ctx.fillStyle=bg; rr(ctx,0,0,innerW,innerH,IN_R,true);
+
+      // Header area (reserve space; text removed by request)
+      const headerY = P + 6;
+      // ctx.fillStyle=T.text; ctx.font='700 36px Fraunces, serif'; ctx.textBaseline='top';
+      // (No 'Bulk Identity' text)
+      drawChip(ctx, innerW - P - 64, headerY, 56, 40);
+
+      // Photo
+      const TITLE_H = 48; // keep spacing stable
+      const photoTop = headerY + TITLE_H;
+      const photoSize = Math.min(COL_L, innerH - P - photoTop - 96);
+      const photoX = P + 0.5, photoY = photoTop + 0.5;
+
+      ctx.fillStyle='rgba(237,236,227,.06)';
+      rr(ctx, photoX-6, photoY-6, photoSize+12, photoSize+12, 18, true);
+      ctx.strokeStyle='rgba(237,236,227,.16)'; ctx.lineWidth=1; rrS(ctx, photoX-6, photoY-6, photoSize+12, photoSize+12, 18);
+
+      const img = await loadImage(data.imgSrc);
+      rrP(ctx, photoX, photoY, photoSize, photoSize, 14); ctx.save(); ctx.clip(); ctx.drawImage(img, photoX, photoY, photoSize, photoSize); ctx.restore();
+
+      // Right column
+      const rx = P + COL_L + GAP;
+      let y = photoY;
+      const lineX1 = rx, lineX2 = innerW - P + 0.5;
+
+      const drawField = (label, value, opt={})=>{
+        let fontSpec, fontSize;
+        if (opt.fancy){ fontSpec='700 44px Fraunces, serif'; fontSize=44; }
+        else if (opt.big){ fontSpec='700 24px Inter, system-ui'; fontSize=24; }
+        else { fontSpec='700 18px Inter, system-ui'; fontSize=18; }
+
+        // Value (raise above line slightly)
+        ctx.font = fontSpec;
+        ctx.fillStyle = T.text;
+        ctx.textBaseline='alphabetic';
+
+        const lineY = y + fontSize;
+        const textBaselineY = lineY - BASELINE_OFFSET - 6; // lift value
+        ctx.fillText(value, rx+0.5, textBaselineY);
+
+        // Line
+        ctx.strokeStyle='rgba(237,236,227,.14)'; 
+        ctx.lineWidth=1;
+        ctx.beginPath(); 
+        ctx.moveTo(lineX1+0.5, lineY+0.5); 
+        ctx.lineTo(lineX2, lineY+0.5); 
+        ctx.stroke();
+
+        // Label to the right of the line
+        const labelFont = '600 14px Inter, system-ui';
+        ctx.font = labelFont;
+        ctx.fillStyle = T.muted;
+        ctx.textBaseline = 'alphabetic';
+
+        const labelWidth = ctx.measureText(label).width;
+        const labelX = lineX2 - labelWidth - 6;
+        const labelY = (opt.fancy ? (lineY - 12) : (lineY - fontSize + 14));
+        ctx.fillText(label, labelX, labelY);
+
+        y = lineY + FIELD_GAP;
+      };
+
+      drawField('Name',       data.name || 'Real Bulker', {fancy:true});
+      drawField('Discord',    (data.discord || ''),       {big:true});
+      drawField('Bullish',    data.bullish,               {big:true});
+      drawField('Member ID',  memberId,                   {big:true});
+      drawField('Valid Thru', '∞',                        {big:true});
+
+      ctx.restore();
+    }
+
+    function getVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() }
+    function rr(ctx,x,y,w,h,r,fill){ rrP(ctx,x,y,w,h,r); if(fill) ctx.fill() }
+    function rrS(ctx,x,y,w,h,r){ rrP(ctx,x,y,w,h,r); ctx.stroke() }
+    function rrP(ctx,x,y,w,h,r){ if(w<2*r) r=w/2; if(h<2*r) r=h/2; ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+    function drawChip(ctx,x,y,w,h){ const g=ctx.createLinearGradient(x,y,x+w,y+h); g.addColorStop(0,'#c6b6ba'); g.addColorStop(1,'#5a2c40'); ctx.globalAlpha=.28; ctx.fillStyle=g; rr(ctx,x,y,w,h,8,true); ctx.globalAlpha=1; ctx.strokeStyle='rgba(237,236,227,.35)'; ctx.lineWidth=1; rrS(ctx,x+.5,y+.5,w-1,h-1,8); }
+    function formatDiscord(x){ return (x||''); } // no '@' prefix
+    function makeId(){ return 'BLK-' + String(idCounter++).padStart(6,'0') }
+    function loadImage(src){ return new Promise(res=>{ const i=new Image(); i.crossOrigin='anonymous'; i.src=src; i.onload=()=>res(i) }) }
+
+    async function drawPreview(){
+      pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height);
+      await renderCard(pvCtx, pvCanvas.width, pvCanvas.height, {
+        name: elName.value, discord: formatDiscord(elDiscord.value), bullish: elLevel.value, imgSrc
+      });
+    }
+
+    // Inputs
+    elName.oninput=elDiscord.oninput=()=>drawPreview(); 
+    elLevel.onchange=drawPreview;
+
+    // Custom file control
+    chooseFileBtn.onclick=()=>elPhoto.click();
+    elPhoto.onchange=(e)=>{
+      const f=e.target.files?.[0];
+      fileNameEl.textContent = f ? f.name : 'No file chosen';
+      if(!f) return;
+      const r=new FileReader();
+      r.onload=()=>{imgSrc=r.result;drawPreview()};
+      r.readAsDataURL(f)
+    };
+
+    document.getElementById('resetBtn').onclick=()=>{
+      elName.value='Real Bulker';
+      elDiscord.value='';
+      elLevel.value='Bullish';
+      elPhoto.value='';
+      fileNameEl.textContent='No file chosen';
+      imgSrc=DEFAULT_IMG;
+      memberId=makeId();
+      drawPreview()
+    };
+
+    // Tilt
+    tilt.onmousemove=(e)=>{
+      const r=tilt.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      tilt.style.transform=`rotateX(${(y*6).toFixed(2)}deg) rotateY(${(-x*8).toFixed(2)}deg)`
+    };
+    tilt.onmouseleave=()=>tilt.style.transform='rotateX(0) rotateY(0)';
+
+    // Export @ DPR
+    document.getElementById('downloadBtn').onclick=()=>{
+      const dpr = window.devicePixelRatio || 1;
+      const canvas = document.createElement('canvas');
+      canvas.width = pvCanvas.clientWidth * dpr;
+      canvas.height = pvCanvas.clientHeight * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.drawImage(pvCanvas, 0, 0, pvCanvas.clientWidth, pvCanvas.clientHeight);
+      const a = document.createElement('a');
+      a.download = (elName.value||'real-bulker')
+        .trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')
+        + '_passport.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    };
+
+    drawPreview();
+  </script>
+</body>
+</html>

@@ -1,127 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
-  <meta charset="utf-8" />
-  <title>Real Bulkoor — Passport Card</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passport Card — Real Bulkoor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-1: #1B1A14;
-      --bg-2: #14130F;
-      --text: #EDEBE6;
-      --muted: #A8A59C;
-      --border: #2B2A25;
+      --bg:#1B1A14;
+      --text:#EDEBE6;
+      --muted:#A8A59C;
+      --border:#2B2A25;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      margin: 0;
-      padding: 0;
-      background: var(--bg-1);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Inter', sans-serif;
+      margin:0;
+      padding:40px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
     }
-
     .card {
-      width: 340px;
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: 0 0 18px rgba(0, 0, 0, 0.4);
-      padding: 32px 28px;
-      text-align: left;
-    }
-
-    .title {
-      font-family: 'Fraunces', serif;
-      font-weight: 700;
-      font-size: 18px;
-      margin-bottom: 20px;
-      text-align: center;
-      letter-spacing: 0.02em;
+      width:320px;
+      background:#14130F;
+      border:1px solid var(--border);
+      padding:24px 28px;
+      border-radius:10px;
+      box-shadow:0 0 12px rgba(0,0,0,.4);
+      font-size:14px;
+      line-height:1.3;
     }
 
     .row {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display:flex;
+      align-items:baseline;
+      gap:8px;
+      padding:8px 0;
+      border-bottom:1px solid rgba(255,255,255,.06);
     }
-
     .row:last-child {
-      border-bottom: none;
+      border-bottom:none;
     }
 
     .label {
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      flex-shrink: 0;
+      color:var(--muted);
+      font-size:11px;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      white-space:nowrap;
+      flex-shrink:0;
     }
-
     .dots {
-      flex: 1 1 auto;
-      border-bottom: 1px dotted rgba(255, 255, 255, 0.16);
-      transform: translateY(-2px);
+      flex:1 1 auto;
+      border-bottom:1px dotted rgba(255,255,255,.16);
+      transform:translateY(-2px);
     }
-
     .value {
-      font-family: 'Fraunces', serif;
-      font-weight: 700;
-      font-size: 15px;
-      white-space: nowrap;
-    }
-
-    @media (max-width: 400px) {
-      .card {
-        width: 90%;
-        padding: 24px 20px;
-      }
-      .value {
-        font-size: 14px;
-      }
+      font-family:'Fraunces', serif;
+      font-weight:700;
+      font-size:15px;
+      white-space:nowrap;
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="title">Real Bulkoor — Passport Card</div>
-
     <div class="row">
       <span class="label">Name</span>
       <span class="dots"></span>
       <span class="value">Real Bulkoor</span>
     </div>
-
     <div class="row">
       <span class="label">Discord</span>
       <span class="dots"></span>
       <span class="value">@handle</span>
     </div>
-
     <div class="row">
       <span class="label">Bullish</span>
       <span class="dots"></span>
       <span class="value">Bullish</span>
     </div>
-
     <div class="row">
       <span class="label">Member ID</span>
       <span class="dots"></span>
       <span class="value">BLK-000001</span>
     </div>
-
     <div class="row">
       <span class="label">Valid Thru</span>
       <span class="dots"></span>

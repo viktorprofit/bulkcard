@@ -18,20 +18,16 @@
       box-sizing: border-box;
     }
 
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
-
     body {
+      margin: 0;
+      padding: 0;
       background: var(--bg-1);
       color: var(--text);
       font-family: 'Inter', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
     }
 
     .card {
@@ -41,14 +37,15 @@
       border-radius: 12px;
       box-shadow: 0 0 18px rgba(0, 0, 0, 0.4);
       padding: 32px 28px;
+      text-align: left;
     }
 
     .title {
       font-family: 'Fraunces', serif;
       font-weight: 700;
       font-size: 18px;
+      margin-bottom: 20px;
       text-align: center;
-      margin-bottom: 22px;
       letter-spacing: 0.02em;
     }
 
@@ -56,29 +53,12 @@
       display: flex;
       align-items: baseline;
       gap: 8px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .row:last-child {
       border-bottom: none;
-    }
-
-    .value {
-      font-family: 'Fraunces', serif;
-      font-weight: 700;
-      font-size: 15px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 60%;
-    }
-
-    .dots {
-      flex: 1 1 auto;
-      border-bottom: 1px dotted rgba(255, 255, 255, 0.16);
-      transform: translateY(-2px);
-      min-width: 16px;
     }
 
     .label {
@@ -88,7 +68,19 @@
       text-transform: uppercase;
       white-space: nowrap;
       flex-shrink: 0;
-      text-align: right;
+    }
+
+    .dots {
+      flex: 1 1 auto;
+      border-bottom: 1px dotted rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
+    }
+
+    .value {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 15px;
+      white-space: nowrap;
     }
 
     @media (max-width: 400px) {
@@ -98,7 +90,6 @@
       }
       .value {
         font-size: 14px;
-        max-width: 55%;
       }
     }
   </style>
@@ -108,33 +99,33 @@
     <div class="title">Real Bulkoor — Passport Card</div>
 
     <div class="row">
-      <span class="value">Real Bulkoor</span>
-      <span class="dots"></span>
       <span class="label">Name</span>
+      <span class="dots"></span>
+      <span class="value">Real Bulkoor</span>
     </div>
 
     <div class="row">
-      <span class="value">@handle</span>
-      <span class="dots"></span>
       <span class="label">Discord</span>
+      <span class="dots"></span>
+      <span class="value">@handle</span>
     </div>
 
     <div class="row">
-      <span class="value">Bullish</span>
-      <span class="dots"></span>
       <span class="label">Bullish</span>
+      <span class="dots"></span>
+      <span class="value">Bullish</span>
     </div>
 
     <div class="row">
-      <span class="value">BLK-000001</span>
-      <span class="dots"></span>
       <span class="label">Member ID</span>
+      <span class="dots"></span>
+      <span class="value">BLK-000001</span>
     </div>
 
     <div class="row">
-      <span class="value">∞</span>
-      <span class="dots"></span>
       <span class="label">Valid Thru</span>
+      <span class="dots"></span>
+      <span class="value">∞</span>
     </div>
   </div>
 </body>

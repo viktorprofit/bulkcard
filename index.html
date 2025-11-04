@@ -144,15 +144,13 @@
       bg.addColorStop(0,T.ink); bg.addColorStop(1,T.ink2);
       ctx.fillStyle=bg; rr(ctx,0,0,innerW,innerH,IN_R,true);
 
-      // Header area (reserve space; text removed by request)
+      // Header area (text removed by request)
       const headerY = P + 6;
-      // ctx.fillStyle=T.text; ctx.font='700 36px Fraunces, serif'; ctx.textBaseline='top';
       // (No 'Bulk Identity' text)
       drawChip(ctx, innerW - P - 64, headerY, 56, 40);
 
       // Photo
-      const TITLE_H = 48; // keep spacing stable
-      const photoTop = headerY + TITLE_H;
+      const photoTop = headerY + TITLE_H;            // ← використовуємо вже оголошене TITLE_H
       const photoSize = Math.min(COL_L, innerH - P - photoTop - 96);
       const photoX = P + 0.5, photoY = photoTop + 0.5;
 
@@ -174,7 +172,7 @@
         else if (opt.big){ fontSpec='700 24px Inter, system-ui'; fontSize=24; }
         else { fontSpec='700 18px Inter, system-ui'; fontSize=18; }
 
-        // Value (raise above line slightly)
+        // Value (raised slightly above the line)
         ctx.font = fontSpec;
         ctx.fillStyle = T.text;
         ctx.textBaseline='alphabetic';
@@ -199,7 +197,7 @@
 
         const labelWidth = ctx.measureText(label).width;
         const labelX = lineX2 - labelWidth - 6;
-        const labelY = (opt.fancy ? (lineY - 12) : (lineY - fontSize + 14));
+        const labelY = opt.fancy ? (lineY - 12) : (lineY - fontSize + 14); // Name lowered
         ctx.fillText(label, labelX, labelY);
 
         y = lineY + FIELD_GAP;
@@ -219,14 +217,16 @@
     function rrS(ctx,x,y,w,h,r){ rrP(ctx,x,y,w,h,r); ctx.stroke() }
     function rrP(ctx,x,y,w,h,r){ if(w<2*r) r=w/2; if(h<2*r) r=h/2; ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
     function drawChip(ctx,x,y,w,h){ const g=ctx.createLinearGradient(x,y,x+w,y+h); g.addColorStop(0,'#c6b6ba'); g.addColorStop(1,'#5a2c40'); ctx.globalAlpha=.28; ctx.fillStyle=g; rr(ctx,x,y,w,h,8,true); ctx.globalAlpha=1; ctx.strokeStyle='rgba(237,236,227,.35)'; ctx.lineWidth=1; rrS(ctx,x+.5,y+.5,w-1,h-1,8); }
-    function formatDiscord(x){ return (x||''); } // no '@' prefix
     function makeId(){ return 'BLK-' + String(idCounter++).padStart(6,'0') }
     function loadImage(src){ return new Promise(res=>{ const i=new Image(); i.crossOrigin='anonymous'; i.src=src; i.onload=()=>res(i) }) }
 
     async function drawPreview(){
       pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height);
       await renderCard(pvCtx, pvCanvas.width, pvCanvas.height, {
-        name: elName.value, discord: formatDiscord(elDiscord.value), bullish: elLevel.value, imgSrc
+        name: elName.value,
+        discord: elDiscord.value,
+        bullish: elLevel.value,
+        imgSrc
       });
     }
 

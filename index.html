@@ -178,7 +178,7 @@
 
         const labelWidth = ctx.measureText(label).width;
         const labelX = lineX2 - labelWidth - 6;
-        const labelY = lineY - fontSize + 14; // 🔻 опущено нижче — тепер лейбли врівень з текстом
+        const labelY = opt.fancy ? (lineY - 12) : (lineY - fontSize + 14);
         ctx.fillText(label, labelX, labelY);
 
         y = lineY + FIELD_GAP;

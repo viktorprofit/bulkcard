@@ -150,24 +150,20 @@
       let y = photoY;
       const lineX1 = rx, lineX2 = innerW - P + 0.5;
 
-      // === ПІДПИСИ ПРАВОРУЧ ВІД ЛІНІЇ (єдина зміна у верстці картки) ===
       const drawField = (label, value, opt={})=>{
-        // Визначаємо розмір значення
         let fontSpec, fontSize;
         if (opt.fancy){ fontSpec='700 44px Fraunces, serif'; fontSize=44; }
         else if (opt.big){ fontSpec='700 24px Inter, system-ui'; fontSize=24; }
         else { fontSpec='700 18px Inter, system-ui'; fontSize=18; }
 
-        // Малюємо значення
         ctx.font = fontSpec;
         ctx.fillStyle = T.text;
         ctx.textBaseline='alphabetic';
 
-        const lineY = y + fontSize;                 // базова лінія під значенням
+        const lineY = y + fontSize;
         const textBaselineY = lineY - BASELINE_OFFSET;
-        ctx.fillText(value, rx+0.5, textBaselineY); // значення ліворуч
+        ctx.fillText(value, rx+0.5, textBaselineY);
 
-        // Горизонтальна лінія під значенням
         ctx.strokeStyle='rgba(237,236,227,.14)'; 
         ctx.lineWidth=1;
         ctx.beginPath(); 
@@ -175,25 +171,23 @@
         ctx.lineTo(lineX2, lineY+0.5); 
         ctx.stroke();
 
-        // Підпис праворуч (вирівняний від правого краю)
         const labelFont = '600 14px Inter, system-ui';
         ctx.font = labelFont;
         ctx.fillStyle = T.muted;
         ctx.textBaseline = 'alphabetic';
 
         const labelWidth = ctx.measureText(label).width;
-        const labelX = lineX2 - labelWidth - 6;     // невеликий внутрішній відступ
-        const labelY = lineY - fontSize - 10;       // трохи вище лінії, над правим краєм
+        const labelX = lineX2 - labelWidth - 6;
+        const labelY = lineY - fontSize + 4; // 🔹 знижено, щоб підпис був врівень із текстом
         ctx.fillText(label, labelX, labelY);
 
-        // Перехід до наступного поля
         y = lineY + FIELD_GAP;
       };
 
-      drawField('Name',       data.name || 'Real Bulkoor', {fancy:true});
-      drawField('Discord',    formatDiscord(data.discord), {big:true});
-      drawField('Bullish',    data.bullish, {big:true});
-      drawField('Member ID',  memberId, {big:true});
+      drawField('Name', data.name || 'Real Bulkoor', {fancy:true});
+      drawField('Discord', formatDiscord(data.discord), {big:true});
+      drawField('Bullish', data.bullish, {big:true});
+      drawField('Member ID', memberId, {big:true});
       drawField('Valid Thru', '∞', {big:true});
 
       ctx.restore();
@@ -221,7 +215,6 @@
     tilt.onmousemove=(e)=>{const r=tilt.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;tilt.style.transform=`rotateX(${(y*6).toFixed(2)}deg) rotateY(${(-x*8).toFixed(2)}deg)`};
     tilt.onmouseleave=()=>tilt.style.transform='rotateX(0) rotateY(0)';
 
-    // Експорт 1:1 з урахуванням DPR
     document.getElementById('downloadBtn').onclick=()=>{
       const dpr = window.devicePixelRatio || 1;
       const canvas = document.createElement('canvas');

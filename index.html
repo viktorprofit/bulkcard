@@ -61,7 +61,7 @@
         </div>
         <div class="form-row">
           <label class="label">Discord</label>
-          <input id="discord" class="input" placeholder="your discord" />
+          <input id="discord" class="input" placeholder="yourhandle" />
         </div>
         <div class="form-row">
           <label class="label">Bullish level</label>
@@ -206,9 +206,11 @@
     function rrP(ctx,x,y,w,h,r){ if(w<2*r) r=w/2; if(h<2*r) r=h/2; ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
     function drawChip(ctx,x,y,w,h){ const g=ctx.createLinearGradient(x,y,x+w,y+h); g.addColorStop(0,'#c6b6ba'); g.addColorStop(1,'#5a2c40'); ctx.globalAlpha=.28; ctx.fillStyle=g; rr(ctx,x,y,w,h,8,true); ctx.globalAlpha=1; ctx.strokeStyle='rgba(237,236,227,.35)'; ctx.lineWidth=1; rrS(ctx,x+.5,y+.5,w-1,h-1,8); }
 
+    // Keep text, strip only leading '@'; default to 'your discord' when empty
     function formatDiscord(x){
-      if(!x) return 'your discord';
-      return String(x).replace(/^@+/, '');
+      const v = (x || '').trim();
+      if (!v) return 'your discord';
+      return v.replace(/^@+/, '');
     }
 
     function makeId(){ return 'BLK-' + String(idCounter++).padStart(6,'0') }
@@ -224,9 +226,12 @@
       });
     }
 
-    elName.oninput=elDiscord.oninput=()=>drawPreview(); 
-    elLevel.onchange=drawPreview;
+    // Inputs
+    elName.oninput = drawPreview;
+    elDiscord.oninput = drawPreview;
+    elLevel.onchange = drawPreview;
 
+    // Custom file control
     chooseFileBtn.onclick=()=>elPhoto.click();
     elPhoto.onchange=(e)=>{
       const f=e.target.files?.[0];
@@ -248,6 +253,7 @@
       drawPreview()
     };
 
+    // Tilt
     tilt.onmousemove=(e)=>{
       const r=tilt.getBoundingClientRect();
       const x=(e.clientX-r.left)/r.width-.5;
@@ -256,6 +262,7 @@
     };
     tilt.onmouseleave=()=>tilt.style.transform='rotateX(0) rotateY(0)';
 
+    // Export @ DPR
     document.getElementById('downloadBtn').onclick=()=>{
       const dpr = window.devicePixelRatio || 1;
       const canvas = document.createElement('canvas');
@@ -265,4 +272,15 @@
       ctx.scale(dpr, dpr);
       ctx.drawImage(pvCanvas, 0, 0, pvCanvas.clientWidth, pvCanvas.clientHeight);
       const a = document.createElement('a');
-      a.download = (elName.value||'real-bulker').trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\
+      a.download = (elName.value||'real-bulker')
+        .trim().toLowerCase().replace(/\s+/g,'_').replace(/[^\w.-]/g,'')
+        + '_passport.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    };
+
+    // First paint
+    drawPreview();
+  </script>
+</body>
+</html>

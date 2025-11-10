@@ -21,19 +21,11 @@
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
-      margin: 0; 
-      background: radial-gradient(1200px 800px at 20% -10%, #1b2030 0%, var(--bg-1) 45%),
-                  radial-gradient(1000px 600px at 120% 10%, #0f2730 0%, var(--bg-1) 50%), 
-                  var(--bg-1);
-      color: var(--text); 
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 
-        "Apple Color Emoji", "Segoe UI Emoji";
+      margin: 0; background: radial-gradient(1200px 800px at 20% -10%, #1b2030 0%, var(--bg-1) 45%),
+                   radial-gradient(1000px 600px at 120% 10%, #0f2730 0%, var(--bg-1) 50%), var(--bg-1);
+      color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
-    .container { 
-      max-width: 900px; 
-      margin: 40px auto; 
-      padding: 0 20px; 
-    }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
     .card {
       background: var(--card);
       border: 1px solid var(--line);
@@ -45,16 +37,8 @@
       gap: 16px;
       align-items: flex-start;
     }
-    .label { 
-      color: var(--muted); 
-      font-size: 14px; 
-      margin-bottom: 2px; 
-    }
-    .value { 
-      font-family: Fraunces, serif; 
-      font-size: 20px; 
-      color: var(--text); 
-    }
+    .label { color: var(--muted); font-size: 14px; margin-bottom: 2px; }
+    .value { font-family: Fraunces, serif; font-size: 20px; color: var(--text); }
     input {
       width: 100%;
       padding: 8px 12px;
@@ -75,7 +59,7 @@
       </div>
       <div>
         <div class="label">Discord</div>
-        <div class="value" id="card-discord" data-placeholder="your discord">your discord</div>
+        <div class="value" id="card-discord"></div>
       </div>
       <div>
         <div class="label">Twitter</div>
@@ -104,7 +88,7 @@
 
     function renderFields() {
       nameField.textContent = nameInput.value.trim() || 'your name';
-      discordField.textContent = discordInput.value.trim() || discordField.dataset.placeholder || 'your discord';
+      discordField.textContent = discordInput.value.trim() || ''; // 🔹 пусто, доки користувач не введе
       twitterField.textContent = twitterInput.value.trim() || 'your twitter';
     }
 

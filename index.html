@@ -268,4 +268,13 @@
       ctx.drawImage(pvCanvas, 0, 0, pvCanvas.clientWidth, pvCanvas.clientHeight);
       const a = document.createElement('a');
       a.download = (elName.value||'real-bulker')
-        .trim().
+        .trim().toLowerCase().replace(/\\s+/g,'_').replace(/[^\\w.-]/g,'')
+        + '_passport.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    };
+
+    drawPreview();
+  </script>
+</body>
+</html>

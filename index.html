@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-1: #1B1E24;
+      --bg-1: #0f1115;
       --bg-2: #151922;
       --card: #111418;
       --accent: #66ffcc;
@@ -19,83 +19,77 @@
       --radius: 20px;
     }
     * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; padding: 0; }
+    html, body { height: 100%; }
     body {
+      margin: 0; 
       background: radial-gradient(1200px 800px at 20% -10%, #1b2030 0%, var(--bg-1) 45%),
-                  radial-gradient(1000px 600px at 120% 10%, #0f2730 0%, var(--bg-1) 50%), var(--bg-1);
-      color: var(--text);
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                  radial-gradient(1000px 600px at 120% 10%, #0f2730 0%, var(--bg-1) 50%), 
+                  var(--bg-1);
+      color: var(--text); 
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 
+        "Apple Color Emoji", "Segoe UI Emoji";
     }
-    .stage {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
+    .container { 
+      max-width: 900px; 
+      margin: 40px auto; 
+      padding: 0 20px; 
     }
     .card {
-      position: relative;
-      width: 480px;
-      height: 280px;
       background: var(--card);
+      border: 1px solid var(--line);
       border-radius: var(--radius);
-      border: 1px solid var(--line);
       box-shadow: var(--shadow);
-      overflow: hidden;
-      padding: 24px 32px;
-    }
-    .card .name, .card .discord, .card .twitter {
-      font-family: Fraunces, serif;
-      font-size: 22px;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-    .controls {
-      margin-top: 30px;
+      padding: 40px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
     }
-    input[type="text"], input[type="file"] {
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      border-radius: 8px;
+    .label { 
+      color: var(--muted); 
+      font-size: 14px; 
+      margin-bottom: 2px; 
+    }
+    .value { 
+      font-family: Fraunces, serif; 
+      font-size: 20px; 
+      color: var(--text); 
+    }
+    input {
+      width: 100%;
       padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--bg-2);
       color: var(--text);
       font-family: Inter;
-    }
-    button {
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 8px 16px;
-      color: var(--text);
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="stage">
-    <div class="card" id="previewCard">
-      <div class="name" id="card-name">your name</div>
-      <div class="discord" id="card-discord">your discord</div>
-      <div class="twitter" id="card-twitter">your twitter</div>
+  <div class="container">
+    <div class="card">
+      <div>
+        <div class="label">Name</div>
+        <div class="value" id="card-name">your name</div>
+      </div>
+      <div>
+        <div class="label">Discord</div>
+        <div class="value" id="card-discord" data-placeholder="your discord">your discord</div>
+      </div>
+      <div>
+        <div class="label">Twitter</div>
+        <div class="value" id="card-twitter">your twitter</div>
+      </div>
     </div>
 
-    <div class="controls">
-      <div>
-        <label>Name:</label>
-        <input type="text" id="nameInput" placeholder="Enter your name">
-      </div>
-      <div>
-        <label>Discord:</label>
-        <input type="text" id="discordInput" placeholder="Enter your discord">
-      </div>
-      <div>
-        <label>Twitter:</label>
-        <input type="text" id="twitterInput" placeholder="Enter your twitter">
-      </div>
+    <div style="margin-top:30px;">
+      <label class="label" for="nameInput">Enter Name</label>
+      <input id="nameInput" placeholder="Enter your name" />
+      <label class="label" for="discordInput">Enter Discord</label>
+      <input id="discordInput" placeholder="Enter your discord" />
+      <label class="label" for="twitterInput">Enter Twitter</label>
+      <input id="twitterInput" placeholder="Enter your twitter" />
     </div>
   </div>
 
@@ -110,14 +104,14 @@
 
     function renderFields() {
       nameField.textContent = nameInput.value.trim() || 'your name';
-      // Default Discord shows placeholder text until user types something
-      discordField.textContent = discordInput.value.trim() || 'your discord';
+      discordField.textContent = discordInput.value.trim() || discordField.dataset.placeholder || 'your discord';
       twitterField.textContent = twitterInput.value.trim() || 'your twitter';
     }
 
     nameInput.addEventListener('input', renderFields);
     discordInput.addEventListener('input', renderFields);
     twitterInput.addEventListener('input', renderFields);
+
     window.addEventListener('DOMContentLoaded', renderFields);
   </script>
 </body>
